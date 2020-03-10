@@ -321,7 +321,7 @@ public class BenchmarkIDS {
      * @return 
      *  
      */
-     public Classifier geraModeloBackMLP(Instances dadosTreino,String [] options) {
+     public static Classifier geraModeloBackMLP(Instances dadosTreino,String [] options) {
         BackPropagation bpmlp;                  
          
         bpmlp=new BackPropagation();
