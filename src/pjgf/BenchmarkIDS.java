@@ -317,46 +317,25 @@ public class BenchmarkIDS {
      * GeraModeloBackMLP - Gera um modelo recorrendo a back-propagation MLP
      * 
      * @param dadosTreino - Dados de Treino
+     * @param options - opcções de configuração do modelo
      * @return 
      *  
      */
-     public Classifier geraModeloBackMLP(Instances dadosTreino) {
-         BackPropagation bpmlp;
+     public Classifier geraModeloBackMLP(Instances dadosTreino,String [] options) {
+        BackPropagation bpmlp;                  
          
-         //SelectedTag learningRateFunction;
-         
-         //int numInstancias=dadosTreino.numInstances();
-         
-         bpmlp=new BackPropagation();
-                 
-        bpmlp.setBatchSize("500");
-
-        bpmlp.setBiasInput(1.0); // Recommended
-
-        bpmlp.setHiddenLayer1(80);
-        bpmlp.setHiddenLayer2(40);
-        bpmlp.setHiddenLayer3(10);
-
-        bpmlp.setLearningRate(0.1); // between 0.05 and 0.75
-        bpmlp.setLearningRateFunction(new SelectedTag(LEARNING_FUNCTION_STATIC,TAGS_LEARNING_FUNCTION)); // 3 - Static        
-
-        bpmlp.setMomentum(0.4); // between 0.0 and 0.99
-
-        bpmlp.setTrainingMode(new SelectedTag(TRAINER_BATCH,TAGS_TRAINING_MODE)); // 1 - Batch Training; 2 - Online
-        bpmlp.setTrainingIterations(500);
-        bpmlp.setTransferFunction(new SelectedTag(TRANSFER_SIGMOID,TAGS_TRANSFER_FUNCTION)); // Sigmoid
-
-        bpmlp.setWeightDecay(0.3); // between 0.0 and 1.0
+        bpmlp=new BackPropagation();
         
-        try{
-            bpmlp.buildClassifier(dadosTreino); 
-            return bpmlp;
-        } catch (Exception ex) {
+        try{        
+            bpmlp.setOptions(options);
+            bpmlp.buildClassifier(dadosTreino);
+        } catch (Exception ex){
             Logger.getLogger(BenchmarkIDS.class.getName()).log(Level.SEVERE, null, ex);
             System.out.println("Error: " + ex);
-            System.exit(1);
-            return null;
-        }                
+            System.exit(0);
+        }
+                 
+        return bpmlp;               
     }
      
     /**
@@ -368,7 +347,7 @@ public class BenchmarkIDS {
     static void geraModelosBackMLP(Instances dadosTreino, int seed){
         Classifier modelo;
         
-        String [] BackMLP1,BackMLP2,BackMLP3;
+        String [] backMLP1,backMLP2,backMLP3;
         
         // Geração dos modelos BackMLP
         /* Opções:
@@ -388,10 +367,78 @@ public class BenchmarkIDS {
             3: sign function (Bi-poler Step)
             4: Step function
             5:  Gaussian function
-        weightDecay: weiight decay factor; between 0.0 and 1.0 (0.0=not used)
+        weightDecay: weight decay factor; between 0.0 and 1.0 (0.0=not used)
         */
         
-        // Opções do modelo BackMLP1
+        /* Opções do modelo BackMLP1
+            layer1: 80
+            layer2: 40
+            layer3: 10
+            biasInput: 1.0
+            learningRate: 0.1
+            learningRateFunction: 3
+            momentum: 0.0
+            iterations: 500
+            transferFunction: 1
+            weightDecay: 0.0
+        */        
+        backMLP1=geraOptBackMLP(80,40,10,1.0,0.1,3,0.0,500,1,0.0,seed);
+        
+        
+        /* Opções do modelo BackMLP2 - altera transfer function e momentum
+            layer1: 80
+            layer2: 40
+            layer3: 10
+            biasInput: 1.0
+            learningRate: 0.1
+            learningRateFunction: 3
+            momentum: 0.3
+            iterations: 500
+            transferFunction: 2
+            weightDecay: 0.0
+        */                
+        backMLP2=geraOptBackMLP(80,40,10,1.0,0.1,3,0.3,500,2,0.0,seed);
+        
+        
+        /* Opções do modelo BackMLP3 - altera layer1,layer2,layer3, momentum e weightDecay
+            layer1: 100
+            layer2: 80
+            layer3: 40
+            biasInput: 1.0
+            learningRate: 0.1
+            learningRateFunction: 3
+            momentum: 0.3
+            iterations: 500
+            transferFunction: 1
+            weightDecay: 0.2
+        */                
+        backMLP3=geraOptBackMLP(100,80,40,1.0,0.1,3,0.3,500,1,0.2,seed);
+        
+        
+        // Conjunto das opções arrumado num array; facilita a automatização e a geração dos 3 modelos
+        String[][] optBackMLP={backMLP1,backMLP2,backMLP3};
+        
+        // Gera os 3 modelos, com um ciclo
+        try {
+            for (int i=0; i<optBackMLP.length;i++){
+
+                System.out.println("Gerando o modelo BackMLP"+Integer.toString(i));
+
+                modelo=geraModeloBackMLP(dadosTreino,optBackMLP[i]);
+
+                String nomefich1=modelos_path+"modBackMLP"+Integer.toString(i);
+
+                // Guarda o modelo
+                SerializationHelper.write(nomefich1,modelo);
+
+            }
+        } catch (Exception ex){
+            Logger.getLogger(BenchmarkIDS.class.getName()).log(Level.SEVERE, null, ex);
+            System.out.println("Error: " + ex);
+            System.exit(1);            
+        }
+        
+        
         
         
     }
