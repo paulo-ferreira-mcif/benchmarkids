@@ -327,6 +327,24 @@ public class BenchmarkIDS {
         }                
     }
      
+    /**
+     * Função para gerar os 3 modelos BackMLP
+     * A função grava os 3 modelos no directório pré-definido
+     * @param dadosTreino
+     * @param seed 
+     */
+    static void geraModelosBackMLP(Instances dadosTreino, int seed){
+        Classifier modelo;
+        
+        String [] BackMLP1,BackMLP2,BackMLP3;
+        
+        // Geração dos modelos BackMLP
+        
+        // Opções do modelo BackMLP1
+        
+        
+    }
+     
      
      // Testa o modelo (dados de teste) e devolve predicoes
     // A ideia é devolver um Evaluation, que possa, depois, ser tratada no
@@ -654,6 +672,8 @@ public class BenchmarkIDS {
         }                
         
     }
+    
+    
     
     
     /**
