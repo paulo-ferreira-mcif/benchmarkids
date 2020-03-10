@@ -616,11 +616,12 @@ public class BenchmarkIDS {
      */
     static void showHelp(){
         System.out.println("comandos disponiveis:\n");
-        System.out.println("treino <algoritmo>  -> para treinar o algoritmos");
-        System.out.println("teste <algoritmo>  -> para testar os algoritmos");
+        System.out.println("training <algoritmo>  -> para treinar o algoritmos");
+        System.out.println("test <algoritmo>  -> para testar os algoritmos");
         System.out.println("\n\n");
         System.out.println("Algoritmos disponiveis: \n");
         System.out.println("clonalg => Algoritmo CLONALG");
+        System.out.println("mlp => Algoritmo Back-Propagation Multi-Layer Perceptron");
         System.out.println("\n");
     }
     
@@ -1009,7 +1010,7 @@ public class BenchmarkIDS {
             System.exit(0);
         }
         
-        if (args[0].equalsIgnoreCase("treino")){
+        if (args[0].equalsIgnoreCase("training")){
             if (args[1].equalsIgnoreCase("clonalg")){
                 // Gera CLONALG
                 System.out.println("Gerando os modelos CLONALG");
@@ -1021,11 +1022,22 @@ public class BenchmarkIDS {
                 geraModelosClonalg(dadosTreino,globalSeed);
                                 
                 System.exit(0);
+            } else if (args[1].equalsIgnoreCase("mlp")){
+                // Gera CLONALG
+                System.out.println("Gerando os modelos BackMLP");
+                instances=preparaDataset(200000,globalSeed);
+                
+                dadosTreino=instances[0];
+                // dadosTeste=instances[1]; // Not needed
+                
+                geraModelosBackMLP(dadosTreino,globalSeed);
+                                
+                System.exit(0);
             } else {
                 showHelp();
                 System.exit(0);
             }
-        } else if (args[0].equalsIgnoreCase("teste")){
+        } else if (args[0].equalsIgnoreCase("test")){
             if (args[1].equalsIgnoreCase("clonalg")){
                 // Testa CLONALG
                 System.out.println("Testando os modelos CLONALG");
