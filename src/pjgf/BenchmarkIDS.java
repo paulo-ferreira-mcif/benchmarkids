@@ -281,6 +281,38 @@ public class BenchmarkIDS {
         return clonalg;
     }
     
+    public static String[] geraOptBackMLP(int layer1,int layer2,int layer3,
+            double bias,double learningRate,int learningRateFunction,double momentum,
+            int iterations,int transfer,double weightDecay,int seed){
+        
+        String[] opt=new String[22];
+        
+        opt[0]="-X"; // hidden layer 1
+        opt[1]=Integer.toString(layer1);
+        opt[2]="-Y"; // hidden layer 2
+        opt[3]=Double.toString(layer2);
+        opt[4]="-Z"; // hidden layer 3
+        opt[5]=Integer.toString(layer3);
+        opt[6]="-B"; // Bias Input
+        opt[7]=Double.toString(bias);
+        opt[8]="-L"; // Learning Rate
+        opt[9]=Double.toString(learningRate);
+        opt[10]="-M"; // Learning Rate Function
+        opt[11]=Integer.toString(learningRateFunction);
+        opt[12]="-I"; // Training iterations
+        opt[13]=Integer.toString(iterations);
+        opt[14]="-A"; // Momentum
+        opt[15]=Double.toString(momentum);
+        opt[16]="-F"; // Transfer Function
+        opt[17]=Integer.toString(transfer);
+        opt[18]="-D"; // Weight Decay
+        opt[19]=Double.toString(weightDecay);
+        opt[20]="-R"; // Seed
+        opt[21]=Integer.toString(seed);
+                                        
+        return opt;
+    }
+    
     /**
      * GeraModeloBackMLP - Gera um modelo recorrendo a back-propagation MLP
      * 
@@ -339,6 +371,25 @@ public class BenchmarkIDS {
         String [] BackMLP1,BackMLP2,BackMLP3;
         
         // Geração dos modelos BackMLP
+        /* Opções:
+        
+        biasInput: recommended 1.0
+        hiddenLayer1: number of nodes in layer 1 (0 for none)
+        hiddenLayer2: number of nodes in layer 2 (0 for none)
+        hiddenLayer3: number of nodes in layer 3 (0 for none)
+        learningRate: Learning Rate - between 0.05 and 0.75 (recommended 0.1)
+        learningRateFunction: 1=linear decay; 2=Inverse;3=static
+        momentum: momentum factor; between 0.0 and 0.9; 0.0=not used
+        randomNumberSeed: seed
+        trainingIterations: number of iterations; between few hundred and few thousands
+        transferFunction: neuron transfer function
+            1: sigmoid
+            2: tanh (hyperbolic tangent)
+            3: sign function (Bi-poler Step)
+            4: Step function
+            5:  Gaussian function
+        weightDecay: weiight decay factor; between 0.0 and 1.0 (0.0=not used)
+        */
         
         // Opções do modelo BackMLP1
         
