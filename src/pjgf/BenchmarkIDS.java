@@ -31,6 +31,7 @@ import weka.core.Instances;
 import weka.core.SelectedTag;
 import weka.core.SerializationHelper;
 import weka.core.Utils;
+import weka.core.converters.CSVLoader;
 import weka.core.converters.ConverterUtils.DataSource;
 import weka.filters.Filter;
 import weka.filters.supervised.instance.Resample;
@@ -66,10 +67,21 @@ public class BenchmarkIDS {
     public static Instances abreDataset(String filename) {
        
         Instances dataset;
+        
+        CSVLoader loader=new CSVLoader();
+        
+        File dados=new File(filename);
+        
+        loader.setMissingValue("Infinity");
+        
             
         try {    
-            DataSource ficheiro=new DataSource(filename);
-            dataset=ficheiro.getDataSet();
+            //DataSource ficheiro=new DataSource(filename);
+            //dataset=ficheiro.getDataSet();
+            
+            loader.setSource(dados);
+            
+            dataset=loader.getDataSet();
             
             // Set the Label/class column
             if (dataset.classIndex() == -1) {
