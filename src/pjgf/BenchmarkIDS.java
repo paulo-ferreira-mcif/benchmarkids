@@ -34,6 +34,7 @@ import weka.core.Utils;
 import weka.core.converters.ConverterUtils.DataSource;
 import weka.filters.Filter;
 import weka.filters.supervised.instance.Resample;
+import weka.filters.unsupervised.attribute.Normalize;
 // import weka.filters.supervised.instance.StratifiedRemoveFolds;
 import weka.filters.unsupervised.attribute.ReplaceMissingValues;
 import weka.gui.visualize.PlotData2D;
@@ -316,7 +317,7 @@ public class BenchmarkIDS {
     /**
      * GeraModeloBackMLP - Gera um modelo recorrendo a back-propagation MLP
      * 
-     * @param dadosTreino - Dados de Treino
+     * @param dadosTreino - Dados de Treino (Teem que estar normalizados)
      * @param options - opcções de configuração do modelo
      * @return 
      *  
@@ -419,9 +420,14 @@ public class BenchmarkIDS {
         String[][] optBackMLP={backMLP1,backMLP2,backMLP3};
         
         // Normaliza os dados; necessário para BackMLP...
+        //Normalize filtro=new Normalize();
         
         // Gera os 3 modelos, com um ciclo
         try {
+            
+            // Aplica o filtro            
+            dadosTreino=normalizaDados(dadosTreino);
+            
             for (int i=0; i<optBackMLP.length;i++){
 
                 System.out.println("Gerando o modelo BackMLP"+Integer.toString(i));
@@ -438,11 +444,7 @@ public class BenchmarkIDS {
             Logger.getLogger(BenchmarkIDS.class.getName()).log(Level.SEVERE, null, ex);
             System.out.println("Error: " + ex);
             System.exit(1);            
-        }
-        
-        
-        
-        
+        }                                
     }
     
     /**
@@ -452,11 +454,16 @@ public class BenchmarkIDS {
      * @param seed 
      */
     public static void testaModelosBackMLP(Instances dadosTreino,Instances dadosTeste,int seed){
-        Vote ensemble;                
-        
-        ArrayList predictions;                
+        Vote ensemble;             
+        ArrayList predictions;  
         
         try {
+            // Aplica o filtro
+            //filtro.setInputFormat(dadosTreino);
+            dadosTreino=normalizaDados(dadosTreino);
+                        
+            dadosTeste=normalizaDados(dadosTeste);
+            
         // Le os modelos e avalia-os com os dados de teste
             for (int i=0;i<numModelos;i++){
                 // Lê o modelo
@@ -541,7 +548,9 @@ public class BenchmarkIDS {
         
         estatisticaClasse(dataset);
         
-        dataset=trataMissingValues(dataset); 
+        dataset=trataMissingValues(dataset);
+        
+        dataset=normalizaDados(dataset);
         
         // Para efeitos de teste da ferramenta, vai buscar apenas 100000 amostras
         // No teste final, comentar as duas linhas seguintes
@@ -573,6 +582,20 @@ public class BenchmarkIDS {
         
         geraROCCurve(predictions);
 
+    }
+    
+    public static Instances normalizaDados(Instances dataset){
+        Normalize filtro=new Normalize();
+        
+        try{
+            filtro.setInputFormat(dataset);
+            dataset=Filter.useFilter(dataset, filtro);
+        } catch (Exception ex){
+            Logger.getLogger(BenchmarkIDS.class.getName()).log(Level.SEVERE, null, ex);
+            System.out.println("Error: " + ex);
+            System.exit(1);
+        }
+        return dataset;
     }
      
      
