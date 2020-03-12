@@ -1010,7 +1010,67 @@ public class BenchmarkIDS {
             System.exit(0);
         }
         
-        if (args[0].equalsIgnoreCase("training")){
+        switch (args[0]){
+            case "training":
+                switch (args[1]){
+                    case "clonalg":
+                        // Gera CLONALG
+                        System.out.println("Gerando os modelos CLONALG");
+                        instances=preparaDataset(200000,globalSeed);
+                
+                        dadosTreino=instances[0];
+                        // dadosTeste=instances[1]; // Not needed
+                
+                        geraModelosClonalg(dadosTreino,globalSeed);
+                                
+                        System.exit(0);
+                        
+                        break;
+                    case "mlp":
+                        // Gera BackMLP
+                        System.out.println("Gerando os modelos BackMLP");
+                        instances=preparaDataset(200000,globalSeed);
+                
+                        dadosTreino=instances[0];
+                        // dadosTeste=instances[1]; // Not needed
+                
+                        geraModelosBackMLP(dadosTreino,globalSeed);
+                                
+                        System.exit(0);
+                        break;
+                }
+                break;
+            case "test":
+                switch (args[1]){
+                    case "clonalg":
+                        // Testa CLONALG
+                        System.out.println("Testando os modelos CLONALG");
+                                 
+                        instances=preparaDataset(200000,globalSeed); 
+                        dadosTreino=instances[0];
+                        dadosTeste=instances[1];
+                
+                        testaModelosClonalg(dadosTreino,dadosTeste,globalSeed);
+                
+                        zeroDayCLONALG(globalSeed);
+                
+                        Scanner input = new Scanner(System.in);
+                        System.out.print("Press Enter to quit...");
+                        input.nextLine();
+                
+                        System.exit(0);
+                        break;
+                    case "mlp":
+                        
+                        break;
+                }
+                break;
+            default:
+                showHelp();
+                System.exit(0);
+        }
+        
+/*        if (args[0].equalsIgnoreCase("training")){
             if (args[1].equalsIgnoreCase("clonalg")){
                 // Gera CLONALG
                 System.out.println("Gerando os modelos CLONALG");
@@ -1063,7 +1123,7 @@ public class BenchmarkIDS {
         } else {
             showHelp();
             System.exit(0);
-        }
+        } */
         
         
     }
