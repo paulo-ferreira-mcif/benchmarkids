@@ -418,6 +418,8 @@ public class BenchmarkIDS {
         // Conjunto das opções arrumado num array; facilita a automatização e a geração dos 3 modelos
         String[][] optBackMLP={backMLP1,backMLP2,backMLP3};
         
+        // Normaliza os dados; necessário para BackMLP...
+        
         // Gera os 3 modelos, com um ciclo
         try {
             for (int i=0; i<optBackMLP.length;i++){
@@ -441,6 +443,136 @@ public class BenchmarkIDS {
         
         
         
+    }
+    
+    /**
+     * Função para testar os 3 modelos BackMLP
+     * @param dadosTreino
+     * @param dadosTeste
+     * @param seed 
+     */
+    public static void testaModelosBackMLP(Instances dadosTreino,Instances dadosTeste,int seed){
+        Vote ensemble;                
+        
+        ArrayList predictions;                
+        
+        try {
+        // Le os modelos e avalia-os com os dados de teste
+            for (int i=0;i<numModelos;i++){
+                // Lê o modelo
+                String nomefich=modelos_path+"modBackMLP"+Integer.toString(i);
+                Classifier cls=(Classifier)weka.core.SerializationHelper.read(nomefich);
+
+                // predictions... para tratamento futuro
+                predictions=testaModelo(cls,dadosTreino,dadosTeste);
+                
+                geraROCCurve(predictions);
+            }  
+        } catch (Exception ex){
+            Logger.getLogger(BenchmarkIDS.class.getName()).log(Level.SEVERE, null, ex);
+            System.out.println("Error: " + ex);
+            System.exit(1);            
+        }
+        
+        
+        ensemble=geraEnsembleBackMLP(seed);                
+        
+        System.out.println("Testando o Classificador Ensemble");
+        predictions=testaModelo(ensemble,dadosTreino,dadosTeste);
+        
+        geraROCCurve(predictions);
+    }
+    
+    /**
+     * Função para gerar o ensemble dos 3 modelos BackMLP
+     * @param seed
+     * @return 
+     */
+    public static Vote geraEnsembleBackMLP(int seed){
+        Vote ensemble;
+        // Majority Voting
+        ensemble = new Vote();
+        
+        SelectedTag tag = new SelectedTag(Vote.MAJORITY_VOTING_RULE,Vote.TAGS_RULES);
+        ensemble.setCombinationRule(tag);
+        
+        ensemble.setSeed(seed);
+        
+        File[] preBuiltClassifiers=new File[3];
+        
+        System.out.println("Gerando o Classificador Ensemble BackMLP");
+        
+        try {
+            for (int i=0;i<numModelos;i++){
+                String nome=modelos_path+"modBackMLP"+Integer.toString(i);
+                Classifier cls=(Classifier)weka.core.SerializationHelper.read(nome);
+                //preBuiltClassifiers[i]=new File(nome);
+
+                System.out.println("Adicionando o modelo "+nome);
+
+                ensemble.addPreBuiltClassifier(cls);
+            }
+            return (ensemble);
+                                    
+        } catch (Exception ex){
+            Logger.getLogger(BenchmarkIDS.class.getName()).log(Level.SEVERE, null, ex);
+            System.out.println("Error: " + ex);
+            System.exit(1);
+            return (null);
+        }
+    }
+    
+    public static void zeroDayBackMLP(int seed){
+        Vote ensemble;
+        // Abre segundo ficheiro de dados e usa-o  como dataset de testes
+         
+        Instances dataset;
+        ArrayList predictions;
+        
+        System.out.println("=> Abre ficheiro de dados");
+        // Abre o ficheiro de treino
+        dataset=abreDataset(ficheiro2);
+        
+        estatisticaClasse(dataset);
+        
+        System.out.println("=> Trata Classe");
+        // Trata a classe
+        dataset=trataClasse(dataset);
+        
+        estatisticaClasse(dataset);
+        
+        dataset=trataMissingValues(dataset); 
+        
+        // Para efeitos de teste da ferramenta, vai buscar apenas 100000 amostras
+        // No teste final, comentar as duas linhas seguintes
+        // System.out.println("=> Faz o Resample");
+        // dataset=divideDataset(dataset,100000,seed);
+        
+        try{
+        // Le os modelos e avalia-os com os dados de teste
+            for (int i=0;i<numModelos;i++){
+                // Lê o modelo
+                String nomefich=modelos_path+"modBackMLP"+Integer.toString(i);
+                Classifier cls=(Classifier)weka.core.SerializationHelper.read(nomefich);
+
+                // predictions... para tratamento futuro
+                predictions=testaModelo(cls,dataset,dataset);
+                
+                geraROCCurve(predictions);
+            }
+        } catch (Exception ex) {
+            Logger.getLogger(BenchmarkIDS.class.getName()).log(Level.SEVERE, null, ex);
+            System.out.println("Error: " + ex);
+            System.exit(1);
+        }
+                
+        ensemble=geraEnsembleBackMLP(seed);
+        
+        System.out.println("Testando o Classificador Ensemble");
+        predictions=testaModelo(ensemble,dataset,dataset);
+        
+        geraROCCurve(predictions);
+
     }
      
      
@@ -983,12 +1115,13 @@ public class BenchmarkIDS {
      */
     public static void main(String[] args) throws Exception{
         // TODO code application logic here
+        Scanner input;
+        
         Instances dataset,dadosTreino,dadosTeste;
         Instances[] instances;
         
         ArrayList predictions;
-        
-        
+                
         Classifier modelo;
         
         // Variáveis para opções dos modelos CLONALG
@@ -1054,17 +1187,44 @@ public class BenchmarkIDS {
                 
                         zeroDayCLONALG(globalSeed);
                 
-                        Scanner input = new Scanner(System.in);
+                        input = new Scanner(System.in);
                         System.out.print("Press Enter to quit...");
                         input.nextLine();
                 
                         System.exit(0);
                         break;
                     case "mlp":
-                        
+                        // Testa BackMLP
+                        System.out.println("Testando os modelos BackMLP");
+                                 
+                        instances=preparaDataset(200000,globalSeed); 
+                        dadosTreino=instances[0];
+                        dadosTeste=instances[1];
+                
+                        testaModelosBackMLP(dadosTreino,dadosTeste,globalSeed);
+                
+                        zeroDayBackMLP(globalSeed);
+                
+                        input = new Scanner(System.in);
+                        System.out.print("Press Enter to quit...");
+                        input.nextLine();
+                
+                        System.exit(0);
                         break;
                 }
                 break;
+            case "ensemble":
+                switch (args[1]){
+                    case "clonalg":
+                        
+                        break;
+                    case "mlp":
+                        
+                        break;
+                    case "total":
+                        
+                        break;
+                }
             default:
                 showHelp();
                 System.exit(0);
