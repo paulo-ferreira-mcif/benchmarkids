@@ -72,6 +72,7 @@ public class BenchmarkIDS {
         
         File dados=new File(filename);
         
+        // Atributos com "Infinity" passam a Missing Values
         loader.setMissingValue("Infinity");
         
             
@@ -303,7 +304,7 @@ public class BenchmarkIDS {
         opt[0]="-X"; // hidden layer 1
         opt[1]=Integer.toString(layer1);
         opt[2]="-Y"; // hidden layer 2
-        opt[3]=Double.toString(layer2);
+        opt[3]=Integer.toString(layer2);
         opt[4]="-Z"; // hidden layer 3
         opt[5]=Integer.toString(layer3);
         opt[6]="-B"; // Bias Input
@@ -407,10 +408,10 @@ public class BenchmarkIDS {
             learningRateFunction: 3
             momentum: 0.3
             iterations: 500
-            transferFunction: 2
+            transferFunction: 1
             weightDecay: 0.0
         */                
-        backMLP2=geraOptBackMLP(80,40,10,1.0,0.1,3,0.3,500,2,0.0,seed);
+        backMLP2=geraOptBackMLP(80,40,10,1.0,0.1,3,0.3,500,1,0.0,seed);
         
         
         /* Opções do modelo BackMLP3 - altera layer1,layer2,layer3, momentum e weightDecay
