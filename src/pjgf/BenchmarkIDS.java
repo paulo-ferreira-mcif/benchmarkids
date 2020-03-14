@@ -1236,9 +1236,14 @@ public class BenchmarkIDS {
                         instances=preparaDataset(200000,globalSeed); 
                         dadosTreino=instances[0];
                         dadosTeste=instances[1];
+                        
+                        dadosTreino=normalizaDados(dadosTreino);
+                        dadosTeste=normalizaDados(dadosTeste);
                 
                         testaModelosBackMLP(dadosTreino,dadosTeste,globalSeed);
-                
+                        
+                        System.out.println("Testando os modelos BackMLP com Zero-Day");
+                        
                         zeroDayBackMLP(globalSeed);
                 
                         input = new Scanner(System.in);
