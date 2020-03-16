@@ -711,7 +711,7 @@ public class BenchmarkIDS {
             Modelo 2 - altera initMode, learningRate e useVoting
         
             epsilon: 0.1
-            initMode: 4
+            initMode: 5
             learningFunction: 1
             learningRate: 0.5
             totalCBookVectors: 90
@@ -719,7 +719,7 @@ public class BenchmarkIDS {
             useVoting: true
             windowSize: 0.2
         */
-        optLVQ2=geraOptLVQ3(0.1,4,1,0.5,90,4500,true,0.2,seed);
+        optLVQ2=geraOptLVQ3(0.1,5,1,0.5,90,4500,true,0.2,seed);
         
         
         /*
