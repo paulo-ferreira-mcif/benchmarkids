@@ -1378,6 +1378,18 @@ public class BenchmarkIDS {
                                 
                         System.exit(0);
                         break;
+                    case "lvq":
+                        // Gera LVQ
+                        System.out.println("Gerando os modelos LVQ3");
+                        instances=preparaDataset(200000,globalSeed);
+                
+                        dadosTreino=instances[0];
+                        // dadosTeste=instances[1]; // Not needed
+                
+                        geraModelosLVQ3(dadosTreino,globalSeed);
+                                
+                        System.exit(0);
+                        break;
                 }
                 break;
             case "test":
