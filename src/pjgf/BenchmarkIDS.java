@@ -25,6 +25,7 @@ import static weka.classifiers.neural.common.training.TrainerFactory.TAGS_TRAINI
 import static weka.classifiers.neural.common.training.TrainerFactory.TRAINER_BATCH;
 import static weka.classifiers.neural.common.transfer.TransferFunctionFactory.TAGS_TRANSFER_FUNCTION;
 import static weka.classifiers.neural.common.transfer.TransferFunctionFactory.TRANSFER_SIGMOID;
+import weka.classifiers.neural.lvq.Lvq3;
 import weka.classifiers.neural.multilayerperceptron.BackPropagation;
 import weka.core.Attribute;
 import weka.core.Instances;
@@ -337,7 +338,7 @@ public class BenchmarkIDS {
      */
      public static Classifier geraModeloBackMLP(Instances dadosTreino,String [] options) {
         BackPropagation bpmlp;                  
-         
+        
         bpmlp=new BackPropagation();
         
         try{        
@@ -597,6 +598,176 @@ public class BenchmarkIDS {
 
     }
     
+    /*
+     * Modelos LVQ - Learning Vector Quantization
+    */
+    
+    public static Classifier geraModeloLVQ(Instances dadosTreino,String [] options){
+        Lvq3 lvq=new Lvq3();
+        
+        try{        
+            lvq.setOptions(options);
+            lvq.buildClassifier(dadosTreino);
+        } catch (Exception ex){
+            Logger.getLogger(BenchmarkIDS.class.getName()).log(Level.SEVERE, null, ex);
+            System.out.println("Error: " + ex);
+            System.exit(0);
+        }
+        
+        return lvq;
+    }
+    
+    /**
+     * Função para gerar a string de opçóes de cada modelo LVQ3
+     * @param epsilon
+     * @param initMode
+     * @param learningFunction
+     * @param learningRate
+     * @param totalCBookVectors
+     * @param iterations
+     * @param useVoting
+     * @param windowSize
+     * @param seed
+     * @return 
+     */
+    public static String[] geraOptLVQ3(double epsilon,int initMode,int learningFunction,
+                                        double learningRate,int totalCBookVectors,
+                                        int iterations,boolean useVoting,
+                                        double windowSize,int seed){
+        String[] opt=new String[18];
+        
+        opt[0]="-E"; // Epsilon
+        opt[1]=Double.toString(epsilon);
+        opt[2]="-M"; // Initialisation Mode
+        opt[3]=Integer.toString(initMode);
+        opt[4]="-L"; // Learning Function
+        opt[5]=Integer.toString(learningFunction);
+        opt[6]="-R"; // Learning Rate
+        opt[7]=Double.toString(learningRate);
+        opt[8]="-C"; // Total CodeBook Vectors
+        opt[9]=Integer.toString(totalCBookVectors);
+        opt[10]="-I"; // Total Iterations
+        opt[11]=Integer.toString(iterations);
+        opt[12]="-G"; // Use Voting?
+        opt[13]=Boolean.toString(useVoting);
+        opt[14]="-W"; // Window Size
+        opt[15]=Double.toString(windowSize);        
+        opt[16]="-S"; // Seed
+        opt[17]=Integer.toString(seed);
+        
+        return opt;
+    }
+    
+    /**
+     * Função para gerar os 3 modelos LVQ
+     * @param dadosTreino
+     * @param seed 
+     */
+    public static void geraModelosLVQ3(Instances dadosTreino,int seed){                
+        
+        Classifier modelo;
+        
+        String [] optLVQ1,optLVQ2,optLVQ3;
+        
+        /*
+            OPÇÕES DO MODELO LVQ3
+        Epsilon: learning weight modifier used when both BMUs are of the instances class (0.1 or 0.5)
+        Initialisation Mode: Model (codebook vector) initalisation mode
+            1==Random Training Data Proportional
+            2==Random Training Data Even
+            3==Random Values In Range
+            4==Simple KMeans
+            5==Farthest First
+            6==K-Nearest Neighbour Even
+        Learning Function: Learning rate function to use while training; linear is better
+            1==Linear Decay
+            2==Inverse
+            3==Static
+        Learning Rate: Initial learning rate value (recommend  0.3 or 0.5)
+        Total Codebook Vectors: Total number of codebook vectors in the model (one for each attribute?)
+        Total Iterations: Total number of training iterations (recommended 30 to 50 times the number of codebook vectors).
+        useVoting: Use dynamic voting to select the assigned class of each codebook vector
+                    provides automatic handling of misclassified instances.
+        Window Size: windowSize -- Window size matching codebook vectors must be within (recommend 0.2 or 0.3)
+        */
+        
+        /*
+            Modelo 1
+        
+            epsilon: 0.1
+            initMode: 1
+            learningFunction: 1
+            learningRate: 0.3
+            totalCBookVectors: 90
+            iterations: 4500
+            useVoting: false
+            windowSize: 0.2
+            
+        */
+        optLVQ1=geraOptLVQ3(0.1,1,1,0.3,90,4500,false,0.2,seed);
+        
+        
+        /*
+            Modelo 2 - altera initMode, learningRate e useVoting
+        
+            epsilon: 0.1
+            initMode: 4
+            learningFunction: 1
+            learningRate: 0.5
+            totalCBookVectors: 90
+            iterations: 4500
+            useVoting: true
+            windowSize: 0.2
+        */
+        optLVQ2=geraOptLVQ3(0.1,4,1,0.5,90,4500,true,0.2,seed);
+        
+        
+        /*
+            Modelo 3 - altera totalCBookVectors, iterations e useVoting
+        
+            epsilon: 0.1
+            initMode: 1
+            learningFunction: 1
+            learningRate: 0.3
+            totalCBookVectors: 50
+            iterations: 2500
+            useVoting: true
+            windowSize: 0.2
+        */
+        optLVQ3=geraOptLVQ3(0.1,1,1,0.3,50,2500,true,0.2,seed);
+        
+        String[][] optLVQ={optLVQ1,optLVQ2,optLVQ3};
+        
+        // Gera os 3 modelos, com um ciclo
+        try {
+            
+            // Aplica o filtro            
+            dadosTreino=normalizaDados(dadosTreino);
+            
+            for (int i=0; i<optLVQ.length;i++){
+
+                System.out.println("Gerando o modelo LVQ3_"+Integer.toString(i));
+
+                modelo=geraModeloLVQ(dadosTreino,optLVQ[i]);
+
+                String nomefich1=modelos_path+"modLVQ"+Integer.toString(i);
+
+                // Guarda o modelo
+                SerializationHelper.write(nomefich1,modelo);
+
+            }
+        } catch (Exception ex){
+            Logger.getLogger(BenchmarkIDS.class.getName()).log(Level.SEVERE, null, ex);
+            System.out.println("Error: " + ex);
+            System.exit(1);            
+        }                                
+    }
+    
+    /**
+     * Função para normalizar oa atributos numéricos do dataset
+     * @param dataset
+     * @return 
+     */
     public static Instances normalizaDados(Instances dataset){
         Normalize filtro=new Normalize();
         
