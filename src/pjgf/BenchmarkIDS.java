@@ -711,7 +711,7 @@ public class BenchmarkIDS {
             Modelo 2 - altera initMode, learningRate e useVoting
         
             epsilon: 0.1
-            initMode: 5
+            initMode: 6
             learningFunction: 1
             learningRate: 0.5
             totalCBookVectors: 90
@@ -719,7 +719,7 @@ public class BenchmarkIDS {
             useVoting: true
             windowSize: 0.2
         */
-        optLVQ2=geraOptLVQ3(0.1,5,1,0.5,90,4500,true,0.2,seed);
+        optLVQ2=geraOptLVQ3(0.1,6,1,0.5,90,4500,true,0.2,seed);
         
         
         /*
@@ -761,6 +761,147 @@ public class BenchmarkIDS {
             System.out.println("Error: " + ex);
             System.exit(1);            
         }                                
+    }
+    
+    /**
+     * Função para testar os modelos LVQ previamente gerados
+     * @param dadosTreino
+     * @param dadosTeste
+     * @param seed 
+     */
+    public static void testaModelosLVQ(Instances dadosTreino,Instances dadosTeste,int seed){
+        Vote ensemble;             
+        ArrayList predictions;  
+        
+        try {
+            // Aplica o filtro
+            //filtro.setInputFormat(dadosTreino);
+            dadosTreino=normalizaDados(dadosTreino);
+                        
+            dadosTeste=normalizaDados(dadosTeste);
+            
+        // Le os modelos e avalia-os com os dados de teste
+            for (int i=0;i<numModelos;i++){
+                // Lê o modelo
+                String nomefich=modelos_path+"modLVQ"+Integer.toString(i);
+                Classifier cls=(Classifier)weka.core.SerializationHelper.read(nomefich);
+
+                // predictions... para tratamento futuro
+                predictions=testaModelo(cls,dadosTreino,dadosTeste);
+                
+                geraROCCurve(predictions);
+            }  
+        } catch (Exception ex){
+            Logger.getLogger(BenchmarkIDS.class.getName()).log(Level.SEVERE, null, ex);
+            System.out.println("Error: " + ex);
+            System.exit(1);            
+        }
+        
+        
+        ensemble=geraEnsembleLVQ(seed);                
+        
+        System.out.println("Testando o Classificador Ensemble LVQ");
+        predictions=testaModelo(ensemble,dadosTreino,dadosTeste);
+        
+        geraROCCurve(predictions);
+    }
+    
+    /**
+     * Função para gerar o ensemble dos modelos LVQ
+     * @param seed
+     * @return 
+     */
+    public static Vote geraEnsembleLVQ(int seed){
+        Vote ensemble;
+        // Majority Voting
+        ensemble = new Vote();
+        
+        SelectedTag tag = new SelectedTag(Vote.MAJORITY_VOTING_RULE,Vote.TAGS_RULES);
+        ensemble.setCombinationRule(tag);
+        
+        ensemble.setSeed(seed);
+        
+        //File[] preBuiltClassifiers=new File[3];
+        
+        System.out.println("Gerando o Classificador Ensemble LVQ");
+        
+        try {
+            for (int i=0;i<numModelos;i++){
+                String nome=modelos_path+"modLVQ"+Integer.toString(i);
+                Classifier cls=(Classifier)weka.core.SerializationHelper.read(nome);
+                //preBuiltClassifiers[i]=new File(nome);
+
+                System.out.println("Adicionando o modelo "+nome);
+
+                ensemble.addPreBuiltClassifier(cls);
+            }
+            return (ensemble);
+                                    
+        } catch (Exception ex){
+            Logger.getLogger(BenchmarkIDS.class.getName()).log(Level.SEVERE, null, ex);
+            System.out.println("Error: " + ex);
+            System.exit(1);
+            return (null);
+        }
+    }
+    
+    /**
+     * Função para testar os modelos LVQ face a um ataque zero-day
+     * @param seed 
+     */
+    public static void zeroDayLVQ(int seed){
+        Vote ensemble;
+        // Abre segundo ficheiro de dados e usa-o  como dataset de testes
+         
+        Instances dataset;
+        ArrayList predictions;
+        
+        System.out.println("=> Testing LVQ - Zero Day <=");
+        System.out.println("=> Abre ficheiro de dados");
+        // Abre o ficheiro de treino
+        dataset=abreDataset(ficheiro2);
+        
+        estatisticaClasse(dataset);
+        
+        System.out.println("=> Trata Classe");
+        // Trata a classe
+        dataset=trataClasse(dataset);
+        
+        estatisticaClasse(dataset);
+        
+        dataset=trataMissingValues(dataset);
+        
+        dataset=normalizaDados(dataset);
+        
+        // Para efeitos de teste da ferramenta, vai buscar apenas 100000 amostras
+        // No teste final, comentar as duas linhas seguintes
+        // System.out.println("=> Faz o Resample");
+        // dataset=divideDataset(dataset,100000,seed);
+        
+        try{
+        // Le os modelos e avalia-os com os dados de teste
+            for (int i=0;i<numModelos;i++){
+                // Lê o modelo
+                String nomefich=modelos_path+"modLVQ"+Integer.toString(i);
+                Classifier cls=(Classifier)weka.core.SerializationHelper.read(nomefich);
+
+                // predictions... para tratamento futuro
+                predictions=testaModelo(cls,dataset,dataset);
+                
+                geraROCCurve(predictions);
+            }
+        } catch (Exception ex) {
+            Logger.getLogger(BenchmarkIDS.class.getName()).log(Level.SEVERE, null, ex);
+            System.out.println("Error: " + ex);
+            System.exit(1);
+        }
+                
+        ensemble=geraEnsembleLVQ(seed);
+        
+        System.out.println("Testando o Classificador Ensemble LVQ - Zero Day");
+        predictions=testaModelo(ensemble,dataset,dataset);
+        
+        geraROCCurve(predictions);
     }
     
     /**
@@ -1428,6 +1569,29 @@ public class BenchmarkIDS {
                         System.out.println("Testando os modelos BackMLP com Zero-Day");
                         
                         zeroDayBackMLP(globalSeed);
+                
+                        input = new Scanner(System.in);
+                        System.out.print("Press Enter to quit...");
+                        input.nextLine();
+                
+                        System.exit(0);
+                        break;
+                    case "lvq":
+                        // Testa LVQ
+                        System.out.println("Testando os modelos LVQ");
+                                 
+                        instances=preparaDataset(200000,globalSeed); 
+                        dadosTreino=instances[0];
+                        dadosTeste=instances[1];
+                        
+                        dadosTreino=normalizaDados(dadosTreino);
+                        dadosTeste=normalizaDados(dadosTeste);
+                
+                        testaModelosLVQ(dadosTreino,dadosTeste,globalSeed);
+                        
+                        System.out.println("Testando os modelos LVQ com Zero-Day");
+                        
+                        zeroDayLVQ(globalSeed);
                 
                         input = new Scanner(System.in);
                         System.out.print("Press Enter to quit...");
