@@ -54,10 +54,10 @@ public class BenchmarkIDS {
     private static final int numModelos=3;
     
     // Ficheiro com os dados de treino e teste para gerar modelos
-    private static final String ficheiro1=data_path+"Dados_02.csv";
+    private static final String ficheiro1=data_path+"Dados_08.csv";
         
     // Ficheiro com os dados de teste
-    private static final String ficheiro2=data_path+"Dados_03.csv";
+    private static final String ficheiro2=data_path+"Dados_09.csv";
     
     /**
      * Função para abrir o dataset a partir de um ficheiro
