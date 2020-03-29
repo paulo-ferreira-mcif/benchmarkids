@@ -346,11 +346,19 @@ public class BenchmarkIDS {
     }
     
     
-    
+    /**
+     * Função para gerar um array de strings com as opções de configuração dos modelos BackMLP
+     * @param hiddenLayers
+     * @param learningRate
+     * @param momentum
+     * @param trainingTime
+     * @param seed
+     * @return 
+     */
     public static String[] geraOptBackMLP(String hiddenLayers,double learningRate,
             double momentum, int trainingTime,int seed){
         
-        String[] opt=new String[22];
+        String[] opt=new String[17];
         
         opt[0]="-H"; // hidden layers
         opt[1]=hiddenLayers;
@@ -361,7 +369,7 @@ public class BenchmarkIDS {
         opt[6]="-N"; // Training Time (epochs)
         opt[7]=Integer.toString(trainingTime);
         opt[8]="-V"; // Validation Set Size (0=> will train for the specified epochs)
-        opt[9]=Double.toString(0);
+        opt[9]=Integer.toString(0);
         opt[10]="-E"; // Validation Threshold
         opt[11]=Integer.toString(20); // default value
         opt[12]="-B"; // Disable BinaryToNominalFilter
