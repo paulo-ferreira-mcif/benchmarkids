@@ -17,6 +17,7 @@ import java.util.logging.Logger;
 import weka.classifiers.Classifier;
 import weka.classifiers.Evaluation;
 import weka.classifiers.evaluation.ThresholdCurve;
+import weka.classifiers.functions.MultilayerPerceptron;
 import weka.classifiers.immune.clonalg.CLONALG;
 import weka.classifiers.meta.Vote;
 import static weka.classifiers.neural.common.learning.LearningKernelFactory.LEARNING_FUNCTION_STATIC;
@@ -296,6 +297,56 @@ public class BenchmarkIDS {
         return clonalg;
     }
     
+    /**
+     * Função para gerar um arrays de strings com as opções para criação dos modelos BackMLP
+     * Parametros de acordo com implementação de Jason Brownlee
+     * @param layer1
+     * @param layer2
+     * @param layer3
+     * @param bias
+     * @param learningRate
+     * @param learningRateFunction
+     * @param momentum
+     * @param iterations
+     * @param transfer
+     * @param weightDecay
+     * @param seed
+     * @return 
+     */
+    public static String[] geraOptBackMLPBrownlee(int layer1,int layer2,int layer3,
+            double bias,double learningRate,int learningRateFunction,double momentum,
+            int iterations,int transfer,double weightDecay,int seed){
+        
+        String[] opt=new String[22];
+        
+        opt[0]="-X"; // hidden layer 1
+        opt[1]=Integer.toString(layer1);
+        opt[2]="-Y"; // hidden layer 2
+        opt[3]=Integer.toString(layer2);
+        opt[4]="-Z"; // hidden layer 3
+        opt[5]=Integer.toString(layer3);
+        opt[6]="-B"; // Bias Input
+        opt[7]=Double.toString(bias);
+        opt[8]="-L"; // Learning Rate
+        opt[9]=Double.toString(learningRate);
+        opt[10]="-M"; // Learning Rate Function
+        opt[11]=Integer.toString(learningRateFunction);
+        opt[12]="-I"; // Training iterations
+        opt[13]=Integer.toString(iterations);
+        opt[14]="-A"; // Momentum
+        opt[15]=Double.toString(momentum);
+        opt[16]="-F"; // Transfer Function
+        opt[17]=Integer.toString(transfer);
+        opt[18]="-D"; // Weight Decay
+        opt[19]=Double.toString(weightDecay);
+        opt[20]="-R"; // Seed
+        opt[21]=Integer.toString(seed);
+                                        
+        return opt;
+    }
+    
+    
+    
     public static String[] geraOptBackMLP(int layer1,int layer2,int layer3,
             double bias,double learningRate,int learningRateFunction,double momentum,
             int iterations,int transfer,double weightDecay,int seed){
@@ -329,14 +380,15 @@ public class BenchmarkIDS {
     }
     
     /**
-     * GeraModeloBackMLP - Gera um modelo recorrendo a back-propagation MLP
+     * GeraModeloBackMLPBrownlee - Gera um modelo recorrendo a back-propagation MLP
+     * Açgpritmo implementado por Jason Brownlee
      * 
      * @param dadosTreino - Dados de Treino (Teem que estar normalizados)
      * @param options - opcções de configuração do modelo
      * @return 
      *  
      */
-     public static Classifier geraModeloBackMLP(Instances dadosTreino,String [] options) {
+     public static Classifier geraModeloBackMLPBrownlee(Instances dadosTreino,String [] options) {
         BackPropagation bpmlp;                  
         
         bpmlp=new BackPropagation();
@@ -352,6 +404,32 @@ public class BenchmarkIDS {
                  
         return bpmlp;               
     }
+     
+    
+    /**
+     * GeraModeloBackMLP - Gera um modelo recorrendo a back-propagation MLP
+     * 
+     * @param dadosTreino - Dados de Treino (Teem que estar normalizados)
+     * @param options - opcções de configuração do modelo
+     * @return 
+     *  
+     */
+     public static Classifier geraModeloBackMLP(Instances dadosTreino,String [] options) { 
+         MultilayerPerceptron bpmlp;                  
+        
+        bpmlp=new MultilayerPerceptron();
+        
+        try{        
+            bpmlp.setOptions(options);
+            bpmlp.buildClassifier(dadosTreino);
+        } catch (Exception ex){
+            Logger.getLogger(BenchmarkIDS.class.getName()).log(Level.SEVERE, null, ex);
+            System.out.println("Error: " + ex);
+            System.exit(0);
+        }
+                 
+        return bpmlp;
+     }
      
     /**
      * Função para gerar os 3 modelos BackMLP
