@@ -347,35 +347,29 @@ public class BenchmarkIDS {
     
     
     
-    public static String[] geraOptBackMLP(int layer1,int layer2,int layer3,
-            double bias,double learningRate,int learningRateFunction,double momentum,
-            int iterations,int transfer,double weightDecay,int seed){
+    public static String[] geraOptBackMLP(String hiddenLayers,double learningRate,
+            double momentum, int trainingTime,int seed){
         
         String[] opt=new String[22];
         
-        opt[0]="-X"; // hidden layer 1
-        opt[1]=Integer.toString(layer1);
-        opt[2]="-Y"; // hidden layer 2
-        opt[3]=Integer.toString(layer2);
-        opt[4]="-Z"; // hidden layer 3
-        opt[5]=Integer.toString(layer3);
-        opt[6]="-B"; // Bias Input
-        opt[7]=Double.toString(bias);
-        opt[8]="-L"; // Learning Rate
-        opt[9]=Double.toString(learningRate);
-        opt[10]="-M"; // Learning Rate Function
-        opt[11]=Integer.toString(learningRateFunction);
-        opt[12]="-I"; // Training iterations
-        opt[13]=Integer.toString(iterations);
-        opt[14]="-A"; // Momentum
-        opt[15]=Double.toString(momentum);
-        opt[16]="-F"; // Transfer Function
-        opt[17]=Integer.toString(transfer);
-        opt[18]="-D"; // Weight Decay
-        opt[19]=Double.toString(weightDecay);
-        opt[20]="-R"; // Seed
-        opt[21]=Integer.toString(seed);
-                                        
+        opt[0]="-H"; // hidden layers
+        opt[1]=hiddenLayers;
+        opt[2]="-L"; // Learning Rate
+        opt[3]=Double.toString(learningRate);
+        opt[4]="-M"; // Momentum
+        opt[5]=Double.toString(momentum);
+        opt[6]="-N"; // Training Time (epochs)
+        opt[7]=Integer.toString(trainingTime);
+        opt[8]="-V"; // Validation Set Size (0=> will train for the specified epochs)
+        opt[9]=Double.toString(0);
+        opt[10]="-E"; // Validation Threshold
+        opt[11]=Integer.toString(20); // default value
+        opt[12]="-B"; // Disable BinaryToNominalFilter
+        opt[13]="-I"; // Disable Normalize filter; data will be normalized outside
+        opt[14]="-C"; // Do not normalize class
+        opt[15]="-S"; // Seed
+        opt[16]=Integer.toString(seed);
+                                
         return opt;
     }
     
@@ -437,7 +431,7 @@ public class BenchmarkIDS {
      * @param dadosTreino
      * @param seed 
      */
-    static void geraModelosBackMLP(Instances dadosTreino, int seed){
+    static void geraModelosBackMLPBrownlee(Instances dadosTreino, int seed){
         Classifier modelo;
         
         String [] backMLP1,backMLP2,backMLP3;
@@ -475,7 +469,7 @@ public class BenchmarkIDS {
             transferFunction: 1
             weightDecay: 0.0
         */        
-        backMLP1=geraOptBackMLP(80,40,10,1.0,0.1,3,0.0,500,1,0.0,seed);
+        backMLP1=geraOptBackMLPBrownlee(80,40,10,1.0,0.1,3,0.0,500,1,0.0,seed);
         
         
         /* Opções do modelo BackMLP2 - altera transfer function e momentum
@@ -490,7 +484,7 @@ public class BenchmarkIDS {
             transferFunction: 1
             weightDecay: 0.0
         */                
-        backMLP2=geraOptBackMLP(80,40,10,1.0,0.1,3,0.3,500,1,0.0,seed);
+        backMLP2=geraOptBackMLPBrownlee(80,40,10,1.0,0.1,3,0.3,500,1,0.0,seed);
         
         
         /* Opções do modelo BackMLP3 - altera layer1,layer2,layer3, momentum e weightDecay
@@ -505,7 +499,96 @@ public class BenchmarkIDS {
             transferFunction: 1
             weightDecay: 0.2
         */                
-        backMLP3=geraOptBackMLP(100,80,40,1.0,0.1,3,0.3,500,1,0.2,seed);
+        backMLP3=geraOptBackMLPBrownlee(100,80,40,1.0,0.1,3,0.3,500,1,0.2,seed);
+        
+        
+        // Conjunto das opções arrumado num array; facilita a automatização e a geração dos 3 modelos
+        String[][] optBackMLP={backMLP1,backMLP2,backMLP3};
+        
+        // Normaliza os dados; necessário para BackMLP...
+        //Normalize filtro=new Normalize();
+        
+        // Gera os 3 modelos, com um ciclo
+        try {
+            
+            // Aplica o filtro            
+            dadosTreino=normalizaDados(dadosTreino);
+            
+            for (int i=0; i<optBackMLP.length;i++){
+
+                System.out.println("Gerando o modelo BackMLPBrownlee"+Integer.toString(i));
+
+                modelo=geraModeloBackMLPBrownlee(dadosTreino,optBackMLP[i]);
+
+                String nomefich1=modelos_path+"modBackMLPJB"+Integer.toString(i);
+
+                // Guarda o modelo
+                SerializationHelper.write(nomefich1,modelo);
+
+            }
+        } catch (Exception ex){
+            Logger.getLogger(BenchmarkIDS.class.getName()).log(Level.SEVERE, null, ex);
+            System.out.println("Error: " + ex);
+            System.exit(1);            
+        }                                
+    }
+    
+    /**
+     * Função para gerar os 3 modelos MultiLayer Perceptron
+     * @param dadosTreino
+     * @param seed 
+     */
+    static void geraModelosBackMLP(Instances dadosTreino, int seed){
+        Classifier modelo;
+        
+        String [] backMLP1,backMLP2,backMLP3;
+        
+        // Geração dos modelos BackMLP
+        /* Opções:
+        
+        biasInput: recommended 1.0
+        hiddenLayer1: number of nodes in layer 1 (0 for none)
+        hiddenLayer2: number of nodes in layer 2 (0 for none)
+        hiddenLayer3: number of nodes in layer 3 (0 for none)
+        learningRate: Learning Rate - between 0.05 and 0.75 (recommended 0.1)
+        learningRateFunction: 1=linear decay; 2=Inverse;3=static
+        momentum: momentum factor; between 0.0 and 0.9; 0.0=not used
+        randomNumberSeed: seed
+        trainingIterations: number of iterations; between few hundred and few thousands
+        transferFunction: neuron transfer function
+            1: sigmoid
+            2: tanh (hyperbolic tangent)
+            3: sign function (Bi-poler Step)
+            4: Step function
+            5:  Gaussian function
+        weightDecay: weight decay factor; between 0.0 and 1.0 (0.0=not used)
+        */
+        
+        /* Opções do modelo BackMLP1
+            hiddenLayers: 80,40,10            
+            learningRate: 0.1
+            momentum: 0.0
+            iterations: 500
+        */        
+        backMLP1=geraOptBackMLP("80,40,10",0.1,0.0,500,seed);
+        
+        
+        /* Opções do modelo BackMLP2 - altera transfer function e momentum
+            hiddenLayers: 80,40,10
+            learningRate: 0.1
+            momentum: 0.3
+            iterations: 500          
+        */                
+        backMLP2=geraOptBackMLP("80,40,10",0.1,0.3,500,seed);
+        
+        
+        /* Opções do modelo BackMLP3 - altera layer1,layer2,layer3, momentum e weightDecay
+            hiddenLayers: a (o mesmo é dizer (nº atributos+nº classes)/2)
+            learningRate: 0.1
+            momentum: 0.3
+            iterations: 500
+        */                
+        backMLP3=geraOptBackMLP("a",0.1,0.3,500,seed);
         
         
         // Conjunto das opções arrumado num array; facilita a automatização e a geração dos 3 modelos
@@ -538,6 +621,7 @@ public class BenchmarkIDS {
             System.exit(1);            
         }                                
     }
+    
     
     /**
      * Função para testar os 3 modelos BackMLP
