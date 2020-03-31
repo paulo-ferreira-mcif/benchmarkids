@@ -1287,6 +1287,8 @@ public class BenchmarkIDS {
         System.out.println("comandos disponiveis:\n");
         System.out.println("training <algoritmo>  -> para treinar o algoritmos");
         System.out.println("test <algoritmo>  -> para testar os algoritmos");
+        System.out.println("setup fich1 fich2  -> gera ficheiros de treino/teste e zeroday a partir dos ficheiros indicados");
+        System.out.println("Os ficheiros correspondentes do dataset CIC-IDS2018 são identifcados apenas por 2 números de 2 algarismos (ex.: 02 03)");
         System.out.println("\n\n");
         System.out.println("Algoritmos disponiveis: \n");
         System.out.println("clonalg => Algoritmo CLONALG");
