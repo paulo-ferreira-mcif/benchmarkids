@@ -1658,7 +1658,7 @@ public class BenchmarkIDS {
         
         // Trata zeroday
         System.out.println("* * * Gerando ficheiro Zero-Day * * *");
-        file2=dataset_path+"Dados_"+file2;
+        file2=dataset_path+"Dados_"+file2+".csv";
         
         System.out.println("A abrir o ficheiro "+file2);
         zeroDay=abreDataset(file2);
@@ -1674,7 +1674,7 @@ public class BenchmarkIDS {
         // Trata treino e teste
         System.out.println("* * * Gerando ficheiros de treino e teste * * *");
         
-        file1=dataset_path+"Dados_"+file1;
+        file1=dataset_path+"Dados_"+file1+".csv";
         
         System.out.println("A abrir o ficheiro "+file1);
         dataset=abreDataset(file1);
