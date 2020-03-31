@@ -34,6 +34,7 @@ import weka.core.SelectedTag;
 import weka.core.SerializationHelper;
 import weka.core.Utils;
 import weka.core.converters.CSVLoader;
+import weka.core.converters.CSVSaver;
 import weka.core.converters.ConverterUtils.DataSource;
 import weka.filters.Filter;
 import weka.filters.supervised.instance.Resample;
@@ -51,14 +52,32 @@ public class BenchmarkIDS {
     
     // Constantes
     private static final String data_path="c:\\Developer\\dados_mcif\\";
-    private static final String modelos_path="c:\\Developer\\dados_mcif\\modelos\\";
+    private static final String modelos_path=data_path+"modelos\\";
+    private static final String reports_path=data_path+"reports\\";
+    private static final String dataset_path=data_path+"dataset\\";
+    
+    /* 
+    * pasta com os ficheiros dos datasets a utilizar na simulação
+    * haverá 3 ficheiros: training.csv, test.csv e zeroday.csv
+    */
+    private static final String currentdataset_path=data_path+"current\\"; 
+    
     private static final int numModelos=3;
     
     // Ficheiro com os dados de treino e teste para gerar modelos
     private static final String ficheiro1=data_path+"Dados_02.csv";
+    
+    // ficheiro1_training - dados do ficheiro 1 para treino do modelo
+    private static final String ficheiro1_training=currentdataset_path+"training.csv";
+    
+    // ficheiro1_test - dados do ficheiro 1 para teste do modelo
+    private static final String ficheiro1_test=currentdataset_path+"test.csv";
         
     // Ficheiro com os dados de teste
     private static final String ficheiro2=data_path+"Dados_03.csv";
+    
+    // Ficheiro para zero-day
+    private static final String zeroday_file=currentdataset_path+"zeroday.csv";
     
     /**
      * Função para abrir o dataset a partir de um ficheiro
@@ -1290,11 +1309,13 @@ public class BenchmarkIDS {
         // Abre o ficheiro de treino
         dataset=abreDataset(ficheiro1);
         
-        System.out.println("=> Trata Classe");
+        /* System.out.println("=> Trata Classe");
         // Trata a classe
         dataset=trataClasse(dataset);
         
-        dataset=trataMissingValues(dataset);
+        dataset=trataMissingValues(dataset); */
+        
+        dataset=preprocessaDataset(dataset);
         
         // Para efeitos de teste da ferramenta, vai buscar apenas 100000 amostras
         // No teste final, comentar as duas linhas seguintes
@@ -1615,6 +1636,99 @@ public class BenchmarkIDS {
         });
         jf.setVisible(true);
     }
+    
+    /**
+     * Função para preparar o ambiente de testes
+     * Selecciona os dois ficheiros, do primeiro retira o número de amostras indicado
+     * e gera os ficheiros para treino e teste
+     * Abre o segundo ficheiro, faz o pré-processamento do mesmo e grava-o com o nome zeroday.csv
+     * 
+     * Os parametros file1 e file2 são numeros (ex.: 02 03) que são passados na linha de comandos
+     * 
+     * @param file1 Ficheiro que será utilizado no treino do modelo
+     * @param file2 Ficheiro utilizado para simular ataque zero-day
+     * @param samples Numero de amostras do ficheiro file1 a considerar para a fase de treino
+     * @param seed
+     */
+    public static void setup(String file1,String file2,int samples,int seed){
+        
+        Instances dadosTreino,dadosTeste,zeroDay,dataset;
+        
+        Instances[] instances;
+        
+        // Trata zeroday
+        System.out.println("* * * Gerando ficheiro Zero-Day * * *");
+        file2=dataset_path+"Dados_"+file2;
+        
+        System.out.println("A abrir o ficheiro "+file2);
+        zeroDay=abreDataset(file2);
+        
+        System.out.println("=> Pre-processamento...");
+        zeroDay=preprocessaDataset(zeroDay);
+        
+        System.out.println("Guarda o ficheiro Zero-Day");
+        guardaDataset(zeroDay,zeroday_file);
+        
+        
+        
+        // Trata treino e teste
+        System.out.println("* * * Gerando ficheiros de treino e teste * * *");
+        
+        file1=dataset_path+"Dados_"+file1;
+        
+        System.out.println("A abrir o ficheiro "+file1);
+        dataset=abreDataset(file1);
+        
+        System.out.println("=> Pre-processamento...");
+     
+        dataset=preprocessaDataset(dataset);
+        
+        System.out.println("=> Faz o Resample");
+        dataset=divideDataset(dataset,samples,seed);
+        
+        // gera dados de treino e dados de teste
+        instances=geraTreinoTeste(dataset,70.0,seed);
+        dadosTreino=instances[0];
+        dadosTeste=instances[1];
+        
+        System.out.println("Guarda os ficheiros de treino e teste");
+        guardaDataset(dadosTreino,ficheiro1_training);
+        guardaDataset(dadosTreino,ficheiro1_test);   
+    }
+    
+    /**
+     * Fiunção que faz o pre-processamento do dataset - reduz as classes e trata missing values
+     * @param dataset
+     * @return 
+     */
+    public static Instances preprocessaDataset(Instances dataset){
+        System.out.println("Trata classe");        
+        dataset=trataClasse(dataset);
+        
+        System.out.println("Trata Missing Values");
+        dataset=trataMissingValues(dataset);
+        
+        return dataset;
+    }
+    
+    /**
+     * Função para guardar um dataset em disco, em formato CSV
+     * @param dataset
+     * @param filename 
+     */
+    public static void guardaDataset(Instances dataset,String filename){
+        CSVSaver saver=new CSVSaver();
+        
+        saver.setInstances(dataset);
+        try{
+            saver.setFile(new File(filename));
+            saver.writeBatch();
+        } catch (Exception ex){
+            Logger.getLogger(BenchmarkIDS.class.getName()).log(Level.SEVERE, null, ex);
+            System.out.println("Error: " + ex);
+            System.exit(1);
+        }        
+    }
 
     
     
@@ -1783,6 +1897,14 @@ public class BenchmarkIDS {
                         
                         break;
                 }
+            case "setup":
+                if (args.length<3){
+                    showHelp();
+                }
+                String fich1=args[1];
+                String fich2=args[2];
+                setup(fich1,fich2,200000,globalSeed);
+                break;
             default:
                 showHelp();
                 System.exit(0);
