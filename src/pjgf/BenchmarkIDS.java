@@ -1293,6 +1293,7 @@ public class BenchmarkIDS {
         System.out.println("Algoritmos disponiveis: \n");
         System.out.println("clonalg => Algoritmo CLONALG");
         System.out.println("mlp => Algoritmo Back-Propagation Multi-Layer Perceptron");
+        System.out.println("lvq => Learning Vector Quantization");
         System.out.println("\n");
     }
     
