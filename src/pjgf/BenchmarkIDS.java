@@ -1693,7 +1693,7 @@ public class BenchmarkIDS {
         
         System.out.println("Guarda os ficheiros de treino e teste");
         guardaDataset(dadosTreino,ficheiro1_training);
-        guardaDataset(dadosTreino,ficheiro1_test);   
+        guardaDataset(dadosTeste,ficheiro1_test);   
     }
     
     /**
