@@ -1733,7 +1733,11 @@ public class BenchmarkIDS {
         }        
     }
     
-    
+    /**
+     * Função para criar um ensemble com CLONALG e MLP e testar o modelo resultante
+     * Vai buscar os ficheiros de dados à nova estrutura...
+     * @param seed 
+     */
     public static void testaEnsembleCLONALGMLP(int seed){
         Vote ensemble;
         
@@ -1795,7 +1799,10 @@ public class BenchmarkIDS {
                              
     }
     
-    
+    /**
+     * Função que realiza todos os testes com ensembles de multiplos algoritmos
+     * @param seed 
+     */
     public static void testaEnsemble(int seed){
         
         // Testa ensemble CLONALG e MLP
