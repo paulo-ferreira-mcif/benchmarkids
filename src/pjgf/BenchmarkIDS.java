@@ -1859,7 +1859,7 @@ public class BenchmarkIDS {
         
         
         // Trata argumentos da linha de comandos
-        if (args.length<=1){
+        if (args.length<1){
             showHelp();
             System.exit(0);
         }
