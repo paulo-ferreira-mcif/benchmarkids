@@ -1745,6 +1745,10 @@ public class BenchmarkIDS {
         
         ArrayList predictions;
         
+        String nome;
+        
+        Classifier cls;
+        
         ensemble = new Vote();
         
         SelectedTag tag = new SelectedTag(Vote.MAJORITY_VOTING_RULE,Vote.TAGS_RULES);
@@ -1758,14 +1762,16 @@ public class BenchmarkIDS {
         
         try {
             for (int i=0;i<numModelos;i++){
-                String nome=modelos_path+"modCLONALG"+Integer.toString(i);
-                Classifier cls=(Classifier)weka.core.SerializationHelper.read(nome);
+                nome=modelos_path+"modCLONALG"+Integer.toString(i);
+                cls=(Classifier)weka.core.SerializationHelper.read(nome);
                 //preBuiltClassifiers[i]=new File(nome);
 
                 System.out.println("Adicionando o modelo "+nome);
 
-                ensemble.addPreBuiltClassifier(cls);
-                
+                ensemble.addPreBuiltClassifier(cls);                              
+            }
+            
+            for (int i=0;i<numModelos;i++){                                
                 nome=modelos_path+"modBackMLP"+Integer.toString(i);
                 cls=(Classifier)weka.core.SerializationHelper.read(nome);
                 //preBuiltClassifiers[i]=new File(nome);
