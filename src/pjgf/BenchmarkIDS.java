@@ -1852,7 +1852,7 @@ public class BenchmarkIDS {
         
         dataset=trataMissingValues(dataset); */
         
-        dataset=normalizaDados(dataset);
+        //dataset=normalizaDados(dataset);
         
         // Para efeitos de teste da ferramenta, vai buscar apenas 100000 amostras
         // No teste final, comentar as duas linhas seguintes
@@ -2023,14 +2023,15 @@ public class BenchmarkIDS {
                         System.out.println("Testando os modelos CLONALG");
                                  
                         //instances=preparaDataset(200000,globalSeed); 
-                        dadosTreino=abreDataset(ficheiro1_training);
+                        //dadosTreino=abreDataset(ficheiro1_training);
                         //dadosTreino=instances[0];
                         //dadosTeste=instances[1];
                         dadosTeste=abreDataset(ficheiro1_test);
+                        dadosTeste=normalizaDados(dadosTeste);
                 
-                        testaModelosClonalg(dadosTreino,dadosTeste,globalSeed);
+                        testaModelosClonalg(dadosTeste,dadosTeste,globalSeed);
                 
-                        zeroDayCLONALG(globalSeed);
+                        zeroDayAttack("CLONALG",globalSeed);
                 
                         input = new Scanner(System.in);
                         System.out.print("Press Enter to quit...");
@@ -2042,18 +2043,21 @@ public class BenchmarkIDS {
                         // Testa BackMLP
                         System.out.println("Testando os modelos BackMLP");
                                  
-                        instances=preparaDataset(200000,globalSeed); 
+                        /* instances=preparaDataset(200000,globalSeed); 
                         dadosTreino=instances[0];
                         dadosTeste=instances[1];
                         
-                        dadosTreino=normalizaDados(dadosTreino);
+                        dadosTreino=normalizaDados(dadosTreino);*/ 
+                        
+                        dadosTeste=abreDataset(ficheiro1_test);
+                        
                         dadosTeste=normalizaDados(dadosTeste);
                 
-                        testaModelosBackMLP(dadosTreino,dadosTeste,globalSeed);
+                        testaModelosBackMLP(dadosTeste,dadosTeste,globalSeed);
                         
                         System.out.println("Testando os modelos BackMLP com Zero-Day");
                         
-                        zeroDayBackMLP(globalSeed);
+                        zeroDayAttack("BackMLP",globalSeed);
                 
                         input = new Scanner(System.in);
                         System.out.print("Press Enter to quit...");
@@ -2065,18 +2069,19 @@ public class BenchmarkIDS {
                         // Testa LVQ
                         System.out.println("Testando os modelos LVQ");
                                  
-                        instances=preparaDataset(200000,globalSeed); 
+                        /* instances=preparaDataset(200000,globalSeed); 
                         dadosTreino=instances[0];
                         dadosTeste=instances[1];
                         
-                        dadosTreino=normalizaDados(dadosTreino);
+                        dadosTreino=normalizaDados(dadosTreino); */
+                        dadosTeste=abreDataset(ficheiro1_test);
                         dadosTeste=normalizaDados(dadosTeste);
                 
-                        testaModelosLVQ(dadosTreino,dadosTeste,globalSeed);
+                        testaModelosLVQ(dadosTeste,dadosTeste,globalSeed);
                         
                         System.out.println("Testando os modelos LVQ com Zero-Day");
                         
-                        zeroDayLVQ(globalSeed);
+                        zeroDayAttack("LVQ",globalSeed);
                 
                         input = new Scanner(System.in);
                         System.out.print("Press Enter to quit...");
