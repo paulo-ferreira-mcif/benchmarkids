@@ -1758,7 +1758,7 @@ public class BenchmarkIDS {
         
         //File[] preBuiltClassifiers=new File[3];
         
-        System.out.println("Gerando o Classificador Ensemble CLONALG-MLP");
+        System.out.println("Gerando o Classificador Ensemble "+alg1+"-"+alg2);
         
         try {
             for (int i=0;i<numModelos;i++){
