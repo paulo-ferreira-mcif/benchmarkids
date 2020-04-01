@@ -628,7 +628,7 @@ public class BenchmarkIDS {
         try {
             
             // Aplica o filtro            
-            dadosTreino=normalizaDados(dadosTreino);
+            // dadosTreino=normalizaDados(dadosTreino);
             
             for (int i=0; i<optBackMLP.length;i++){
 
@@ -663,9 +663,9 @@ public class BenchmarkIDS {
         try {
             // Aplica o filtro
             //filtro.setInputFormat(dadosTreino);
-            dadosTreino=normalizaDados(dadosTreino);
+            //dadosTreino=normalizaDados(dadosTreino);
                         
-            dadosTeste=normalizaDados(dadosTeste);
+            //dadosTeste=normalizaDados(dadosTeste);
             
         // Le os modelos e avalia-os com os dados de teste
             for (int i=0;i<numModelos;i++){
@@ -931,7 +931,7 @@ public class BenchmarkIDS {
         try {
             
             // Aplica o filtro            
-            dadosTreino=normalizaDados(dadosTreino);
+            //dadosTreino=normalizaDados(dadosTreino);
             
             for (int i=0; i<optLVQ.length;i++){
 
@@ -965,9 +965,9 @@ public class BenchmarkIDS {
         try {
             // Aplica o filtro
             //filtro.setInputFormat(dadosTreino);
-            dadosTreino=normalizaDados(dadosTreino);
+            //dadosTreino=normalizaDados(dadosTreino);
                         
-            dadosTeste=normalizaDados(dadosTeste);
+            //dadosTeste=normalizaDados(dadosTeste);
             
         // Le os modelos e avalia-os com os dados de teste
             for (int i=0;i<numModelos;i++){
@@ -1060,7 +1060,7 @@ public class BenchmarkIDS {
         
         dataset=trataMissingValues(dataset);
         
-        dataset=normalizaDados(dataset);
+        //dataset=normalizaDados(dataset);
         
         // Para efeitos de teste da ferramenta, vai buscar apenas 100000 amostras
         // No teste final, comentar as duas linhas seguintes
@@ -1712,6 +1712,9 @@ public class BenchmarkIDS {
         System.out.println("Trata Missing Values");
         dataset=trataMissingValues(dataset);
         
+        System.out.println("Normalizando os dados");
+        dataset=normalizaDados(dataset);
+        
         return dataset;
     }
     
@@ -1793,14 +1796,14 @@ public class BenchmarkIDS {
         System.out.println("=> Testando o ensemble com dados de Teste");
         
         dadosTeste=abreDataset(ficheiro1_test);
-        dadosTeste=normalizaDados(dadosTeste);
+        //dadosTeste=normalizaDados(dadosTeste);
         
         predictions=testaModelo(ensemble,dadosTeste,dadosTeste);
         
         System.out.println("=> Testando o ensemble com Zero-Day");
         
         dadosTeste=abreDataset(zeroday_file);
-        dadosTeste=normalizaDados(dadosTeste);
+        //dadosTeste=normalizaDados(dadosTeste);
         
         predictions=testaModelo(ensemble,dadosTeste,dadosTeste);
                              
@@ -2027,7 +2030,7 @@ public class BenchmarkIDS {
                         //dadosTreino=instances[0];
                         //dadosTeste=instances[1];
                         dadosTeste=abreDataset(ficheiro1_test);
-                        dadosTeste=normalizaDados(dadosTeste);
+                        //dadosTeste=normalizaDados(dadosTeste);
                 
                         testaModelosClonalg(dadosTeste,dadosTeste,globalSeed);
                 
@@ -2051,7 +2054,7 @@ public class BenchmarkIDS {
                         
                         dadosTeste=abreDataset(ficheiro1_test);
                         
-                        dadosTeste=normalizaDados(dadosTeste);
+                        //dadosTeste=normalizaDados(dadosTeste);
                 
                         testaModelosBackMLP(dadosTeste,dadosTeste,globalSeed);
                         
@@ -2075,7 +2078,7 @@ public class BenchmarkIDS {
                         
                         dadosTreino=normalizaDados(dadosTreino); */
                         dadosTeste=abreDataset(ficheiro1_test);
-                        dadosTeste=normalizaDados(dadosTeste);
+                        //dadosTeste=normalizaDados(dadosTeste);
                 
                         testaModelosLVQ(dadosTeste,dadosTeste,globalSeed);
                         
