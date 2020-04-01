@@ -1732,6 +1732,68 @@ public class BenchmarkIDS {
             System.exit(1);
         }        
     }
+    
+    
+    public static void testaEnsembleCLONALGMLP(int seed){
+        Vote ensemble;
+        
+        Instances dadosTeste;
+        
+        ArrayList predictions;
+        
+        ensemble = new Vote();
+        
+        SelectedTag tag = new SelectedTag(Vote.MAJORITY_VOTING_RULE,Vote.TAGS_RULES);
+        ensemble.setCombinationRule(tag);
+        
+        ensemble.setSeed(seed);
+        
+        //File[] preBuiltClassifiers=new File[3];
+        
+        System.out.println("Gerando o Classificador Ensemble CLONALG-MLP");
+        
+        try {
+            for (int i=0;i<numModelos;i++){
+                String nome=modelos_path+"modCLONALG"+Integer.toString(i);
+                Classifier cls=(Classifier)weka.core.SerializationHelper.read(nome);
+                //preBuiltClassifiers[i]=new File(nome);
+
+                System.out.println("Adicionando o modelo "+nome);
+
+                ensemble.addPreBuiltClassifier(cls);
+                
+                nome=modelos_path+"modMLP"+Integer.toString(i);
+                cls=(Classifier)weka.core.SerializationHelper.read(nome);
+                //preBuiltClassifiers[i]=new File(nome);
+
+                System.out.println("Adicionando o modelo "+nome);
+
+                ensemble.addPreBuiltClassifier(cls);
+            }
+            // return (ensemble);
+                                    
+        } catch (Exception ex){
+            Logger.getLogger(BenchmarkIDS.class.getName()).log(Level.SEVERE, null, ex);
+            System.out.println("Error: " + ex);
+            System.exit(1);
+            //return (null);
+        }
+        
+        System.out.println("=> Testando o ensemble com dados de Teste");
+        
+        dadosTeste=abreDataset(ficheiro1_test);
+        dadosTeste=normalizaDados(dadosTeste);
+        
+        predictions=testaModelo(ensemble,dadosTeste,dadosTeste);
+        
+        System.out.println("=> Testando o ensemble com Zero-Day");
+        
+        dadosTeste=abreDataset(zeroday_file);
+        dadosTeste=normalizaDados(dadosTeste);
+        
+        predictions=testaModelo(ensemble,dadosTeste,dadosTeste);
+                             
+    }
 
     
     
