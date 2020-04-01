@@ -741,17 +741,17 @@ public class BenchmarkIDS {
         
         System.out.println("=> Abre ficheiro de dados");
         // Abre o ficheiro de treino
-        dataset=abreDataset(ficheiro2);
+        dataset=abreDataset(zeroday_file);
         
         estatisticaClasse(dataset);
         
-        System.out.println("=> Trata Classe");
+        /* System.out.println("=> Trata Classe");
         // Trata a classe
         dataset=trataClasse(dataset);
         
         estatisticaClasse(dataset);
         
-        dataset=trataMissingValues(dataset);
+        dataset=trataMissingValues(dataset); */
         
         dataset=normalizaDados(dataset);
         
@@ -1545,10 +1545,11 @@ public class BenchmarkIDS {
         
         System.out.println("=> Abre ficheiro de dados");
         // Abre o ficheiro de treino
-        dataset=abreDataset(ficheiro2);
+        dataset=abreDataset(zeroday_file);
         
         estatisticaClasse(dataset);
         
+        /*
         System.out.println("=> Trata Classe");
         // Trata a classe
         dataset=trataClasse(dataset);
@@ -1560,7 +1561,7 @@ public class BenchmarkIDS {
         // Para efeitos de teste da ferramenta, vai buscar apenas 100000 amostras
         // No teste final, comentar as duas linhas seguintes
         // System.out.println("=> Faz o Resample");
-        // dataset=divideDataset(dataset,100000,seed);
+        // dataset=divideDataset(dataset,100000,seed); */
         
         try{
         // Le os modelos e avalia-os com os dados de teste
@@ -1734,7 +1735,7 @@ public class BenchmarkIDS {
     }
     
     /**
-     * Função para criar um ensemble com CLONALG e MLP e testar o modelo resultante
+     * Função para criar um ensemble com dois algoritmos e testar o modelo resultante
      * Vai buscar os ficheiros de dados à nova estrutura...
      * @param seed 
      */
@@ -1824,6 +1825,107 @@ public class BenchmarkIDS {
         //testaEnsembleCLONALGMPLVQ(seed);
         
     }
+    
+    /**
+     * Função que testa os modelos contra um ataque zero-day
+     * @param alg algoritmo a testar; um de CLONALG,BackMLP e LVQ
+     * @param seed 
+     */
+    public static void zeroDayAttack(String alg,int seed){
+        Vote ensemble;
+        // Abre segundo ficheiro de dados e usa-o  como dataset de testes
+         
+        Instances dataset;
+        ArrayList predictions;
+        
+        System.out.println("=> Abre ficheiro de dados");
+        // Abre o ficheiro de treino
+        dataset=abreDataset(zeroday_file);
+        
+        estatisticaClasse(dataset);
+        
+        /* System.out.println("=> Trata Classe");
+        // Trata a classe
+        dataset=trataClasse(dataset);
+        
+        estatisticaClasse(dataset);
+        
+        dataset=trataMissingValues(dataset); */
+        
+        dataset=normalizaDados(dataset);
+        
+        // Para efeitos de teste da ferramenta, vai buscar apenas 100000 amostras
+        // No teste final, comentar as duas linhas seguintes
+        // System.out.println("=> Faz o Resample");
+        // dataset=divideDataset(dataset,100000,seed);
+        
+        try{
+        // Le os modelos e avalia-os com os dados de teste
+            for (int i=0;i<numModelos;i++){
+                // Lê o modelo
+                String nomefich=modelos_path+"mod"+alg+Integer.toString(i);
+                Classifier cls=(Classifier)weka.core.SerializationHelper.read(nomefich);
+
+                // predictions... para tratamento futuro
+                predictions=testaModelo(cls,dataset,dataset);
+                
+                geraROCCurve(predictions);
+            }
+        } catch (Exception ex) {
+            Logger.getLogger(BenchmarkIDS.class.getName()).log(Level.SEVERE, null, ex);
+            System.out.println("Error: " + ex);
+            System.exit(1);
+        }
+                
+        ensemble=geraEnsemble(alg,seed);
+        
+        System.out.println("Testando o Classificador Ensemble");
+        predictions=testaModelo(ensemble,dataset,dataset);
+        
+        geraROCCurve(predictions);
+
+    }
+    
+    /**
+     * Função para gerar o ensemble de 3 modelos de um algoritmo
+     * Os algoritmos são: CLONALG,BackMLP e LVQ
+     * @param alg
+     * @param seed
+     * @return 
+     */
+    public static Vote geraEnsemble(String alg,int seed){
+        Vote ensemble;
+        // Majority Voting
+        ensemble = new Vote();
+        
+        SelectedTag tag = new SelectedTag(Vote.MAJORITY_VOTING_RULE,Vote.TAGS_RULES);
+        ensemble.setCombinationRule(tag);
+        
+        ensemble.setSeed(seed);
+        
+        File[] preBuiltClassifiers=new File[3];
+        
+        System.out.println("Gerando o Classificador Ensemble "+ alg);
+        
+        try {
+            for (int i=0;i<numModelos;i++){
+                String nome=modelos_path+"mod"+alg+Integer.toString(i);
+                Classifier cls=(Classifier)weka.core.SerializationHelper.read(nome);
+                //preBuiltClassifiers[i]=new File(nome);
+
+                System.out.println("Adicionando o modelo "+nome);
+
+                ensemble.addPreBuiltClassifier(cls);
+            }
+            return (ensemble);
+                                    
+        } catch (Exception ex){
+            Logger.getLogger(BenchmarkIDS.class.getName()).log(Level.SEVERE, null, ex);
+            System.out.println("Error: " + ex);
+            System.exit(1);
+            return (null);
+        }
+    }
 
     
     
@@ -1876,9 +1978,10 @@ public class BenchmarkIDS {
                     case "clonalg":
                         // Gera CLONALG
                         System.out.println("Gerando os modelos CLONALG");
-                        instances=preparaDataset(200000,globalSeed);
+                        //instances=preparaDataset(200000,globalSeed);
+                        dadosTreino=abreDataset(ficheiro1_training);
                 
-                        dadosTreino=instances[0];
+                        //dadosTreino=instances[0];
                         // dadosTeste=instances[1]; // Not needed
                 
                         geraModelosClonalg(dadosTreino,globalSeed);
@@ -1889,9 +1992,9 @@ public class BenchmarkIDS {
                     case "mlp":
                         // Gera BackMLP
                         System.out.println("Gerando os modelos BackMLP");
-                        instances=preparaDataset(200000,globalSeed);
-                
-                        dadosTreino=instances[0];
+                        // instances=preparaDataset(200000,globalSeed);
+                        dadosTreino=abreDataset(ficheiro1_training);
+                        //dadosTreino=instances[0];
                         // dadosTeste=instances[1]; // Not needed
                 
                         geraModelosBackMLP(dadosTreino,globalSeed);
@@ -1901,9 +2004,10 @@ public class BenchmarkIDS {
                     case "lvq":
                         // Gera LVQ
                         System.out.println("Gerando os modelos LVQ3");
-                        instances=preparaDataset(200000,globalSeed);
+                        // instances=preparaDataset(200000,globalSeed);
+                        dadosTreino=abreDataset(ficheiro1_training);
                 
-                        dadosTreino=instances[0];
+                        //dadosTreino=instances[0];
                         // dadosTeste=instances[1]; // Not needed
                 
                         geraModelosLVQ3(dadosTreino,globalSeed);
@@ -1918,9 +2022,11 @@ public class BenchmarkIDS {
                         // Testa CLONALG
                         System.out.println("Testando os modelos CLONALG");
                                  
-                        instances=preparaDataset(200000,globalSeed); 
-                        dadosTreino=instances[0];
-                        dadosTeste=instances[1];
+                        //instances=preparaDataset(200000,globalSeed); 
+                        dadosTreino=abreDataset(ficheiro1_training);
+                        //dadosTreino=instances[0];
+                        //dadosTeste=instances[1];
+                        dadosTeste=abreDataset(ficheiro1_test);
                 
                         testaModelosClonalg(dadosTreino,dadosTeste,globalSeed);
                 
