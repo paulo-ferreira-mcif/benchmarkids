@@ -1794,6 +1794,23 @@ public class BenchmarkIDS {
         predictions=testaModelo(ensemble,dadosTeste,dadosTeste);
                              
     }
+    
+    
+    public static void testaEnsemble(int seed){
+        
+        // Testa ensemble CLONALG e MLP
+        testaEnsembleCLONALGMLP(seed);
+        
+        // Testa Ensemble CLONALG e LVQ
+        //testaEnsembleCLONALGLVQ(seed);
+        
+        // Testa ensemble MLP e LVQ
+        //testaEnsembleMLPLVQ(seed);
+        
+        // Testa ensemble CLONALG, MLP E LVQ
+        //testaEnsembleCLONALGMPLVQ(seed);
+        
+    }
 
     
     
@@ -1951,17 +1968,8 @@ public class BenchmarkIDS {
                 }
                 break;
             case "ensemble":
-                switch (args[1]){
-                    case "clonalg":
-                        
-                        break;
-                    case "mlp":
-                        
-                        break;
-                    case "total":
-                        
-                        break;
-                }
+                testaEnsemble(globalSeed);
+                break;
             case "setup":
                 if (args.length<3){
                     showHelp();
