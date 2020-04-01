@@ -1738,7 +1738,7 @@ public class BenchmarkIDS {
      * Vai buscar os ficheiros de dados à nova estrutura...
      * @param seed 
      */
-    public static void testaEnsembleCLONALGMLP(int seed){
+    public static void testaEnsembleDual(String alg1,String alg2,int seed){
         Vote ensemble;
         
         Instances dadosTeste;
@@ -1762,7 +1762,7 @@ public class BenchmarkIDS {
         
         try {
             for (int i=0;i<numModelos;i++){
-                nome=modelos_path+"modCLONALG"+Integer.toString(i);
+                nome=modelos_path+"mod"+alg1+Integer.toString(i);
                 cls=(Classifier)weka.core.SerializationHelper.read(nome);
                 //preBuiltClassifiers[i]=new File(nome);
 
@@ -1772,7 +1772,7 @@ public class BenchmarkIDS {
             }
             
             for (int i=0;i<numModelos;i++){                                
-                nome=modelos_path+"modBackMLP"+Integer.toString(i);
+                nome=modelos_path+"mod"+alg2+Integer.toString(i);
                 cls=(Classifier)weka.core.SerializationHelper.read(nome);
                 //preBuiltClassifiers[i]=new File(nome);
 
@@ -1812,13 +1812,13 @@ public class BenchmarkIDS {
     public static void testaEnsemble(int seed){
         
         // Testa ensemble CLONALG e MLP
-        testaEnsembleCLONALGMLP(seed);
+        testaEnsembleDual("CLONALG","BackMLP",seed);
         
         // Testa Ensemble CLONALG e LVQ
-        //testaEnsembleCLONALGLVQ(seed);
+        testaEnsembleDual("CLONALG","LVQ",seed);
         
         // Testa ensemble MLP e LVQ
-        //testaEnsembleMLPLVQ(seed);
+        testaEnsembleDual("LVQ","BackMLP",seed);
         
         // Testa ensemble CLONALG, MLP E LVQ
         //testaEnsembleCLONALGMPLVQ(seed);
