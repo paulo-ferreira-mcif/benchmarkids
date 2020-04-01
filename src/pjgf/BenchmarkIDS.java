@@ -1766,7 +1766,7 @@ public class BenchmarkIDS {
 
                 ensemble.addPreBuiltClassifier(cls);
                 
-                nome=modelos_path+"modMLP"+Integer.toString(i);
+                nome=modelos_path+"modBackMLP"+Integer.toString(i);
                 cls=(Classifier)weka.core.SerializationHelper.read(nome);
                 //preBuiltClassifiers[i]=new File(nome);
 
