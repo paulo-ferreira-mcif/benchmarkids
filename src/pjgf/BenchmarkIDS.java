@@ -8,7 +8,10 @@ package pjgf;
 import java.awt.BorderLayout;
 import java.io.File;
 import java.io.FileWriter;
+import java.io.IOException;
 import java.io.PrintWriter;
+import java.time.Duration;
+import java.time.Instant;
 import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.List;
@@ -1162,12 +1165,12 @@ public class BenchmarkIDS {
      * @param file
      * @return 
      */
-    public static Evaluation testaModeloEvaluationFile(Classifier modelo,Instances dadosTreino,Instances dadosTeste,File file) {
+    public static Evaluation testaModeloEvaluationFile(Classifier modelo,Instances dadosTreino,Instances dadosTeste,FileWriter file) {
         
         Evaluation eval;
         ArrayList predictions;
 
-        FileWriter writer;
+        //FileWriter writer;
         // predictions=new ArrayList();
         PrintWriter printer =null; 
         
@@ -1176,19 +1179,22 @@ public class BenchmarkIDS {
 
             eval.evaluateModel(modelo, dadosTeste); 
             
-            writer=new FileWriter(file,true);
+            //writer=new FileWriter(file,true);
             
-            printer=new PrintWriter(writer);
+            //printer=new PrintWriter(writer);
             
             System.out.println(eval.toSummaryString("===> Sumario estatistico <=== ",true));
-            printer.println(eval.toSummaryString("===> Sumario estatistico <=== ",true));
+            //printer.println(eval.toSummaryString("===> Sumario estatistico <=== ",true));
+            //file.write(eval.toSummaryString("===> Sumario estatistico <=== ",true));
             System.out.println(eval.toClassDetailsString("===> Medidas de precisao <==="));
-            printer.println(eval.toClassDetailsString("===> Medidas de precisao <==="));
+            //printer.println(eval.toClassDetailsString("===> Medidas de precisao <==="));
+            file.write(eval.toClassDetailsString("===> Medidas de precisao <==="));
             System.out.println(eval.toMatrixString("===> Matriz Confusão <==="));
-            printer.println(eval.toMatrixString("===> Matriz Confusão <==="));
-            System.out.println("Recall: "+eval.recall(0)+"-"+eval.recall(1));
-            printer.println("Recall: "+eval.recall(0)+"-"+eval.recall(1));
-            predictions=eval.predictions();           
+            //printer.println(eval.toMatrixString("===> Matriz Confusão <==="));
+            file.write(eval.toMatrixString("===> Matriz Confusão <==="));
+            //System.out.println("Recall: "+eval.recall(0)+"-"+eval.recall(1));
+            //printer.println("Recall: "+eval.recall(0)+"-"+eval.recall(1));
+            //predictions=eval.predictions();           
 
             return eval;
         } catch (Exception ex) {
@@ -1988,13 +1994,17 @@ public class BenchmarkIDS {
     /**
      * Função para executar o cenário 1
      * Não é necessário pré-processar os dados, pois já veem processados do fluxo de geração
+     * @throws java.io.IOException
      */
-    public static void cenario1(){
+    public static void cenario1() throws IOException{
         
         Instances dadosTreino,dadosTeste,treino,teste;
         Classifier clonalg,mlp,lvq;
         Vote ensemble;
         Evaluation evalCLONALG,evalMLP,evalLVQ;
+        
+        Instant start,finish;
+        long tempo;
         
         String [] optCLONALG,optMLP,optLVQ;
         
@@ -2002,9 +2012,9 @@ public class BenchmarkIDS {
         String dados2="C:\\Developer\\Dados4Testes\\Dia1NormAt2.csv";
         String report="C:\\Developer\\Dados4Testes\\Reports\\BenchIDSCenario1.txt";
         
-        File file=new File(report);
-        
-        PrintWriter pw=null;
+        //File file=new File(report);
+        FileWriter fwriter=new FileWriter(report);
+        //PrintWriter pw=null;
         
         int[] seeds={1,5,10,23,34,47,55,69,88,93};
         
@@ -2014,6 +2024,7 @@ public class BenchmarkIDS {
         for (int seed: seeds){
             
             System.out.println("====> Valor do Seed: "+seed);
+            fwriter.write("====> Valor do Seed: "+seed+"\n\n");
             
             treino=divideDataset(dadosTreino,140000,seed);
             teste=divideDataset(dadosTeste,60000,seed);
@@ -2033,17 +2044,23 @@ public class BenchmarkIDS {
             //evalCLONALG=testaModeloEvaluationFile(clonalg,treino,teste,file);            
             
             System.out.println("===> Modelo LVQ<===");
+            fwriter.write("====> Modelo LVQ\n\n");
             // Geração e teste do modelo LVQ
+            
+            start=Instant.now();
             lvq=geraModeloLVQ(treino,optLVQ);
-            evalLVQ=testaModeloEvaluationFile(lvq,treino,teste,file);
+            evalLVQ=testaModeloEvaluationFile(lvq,treino,teste,fwriter);
+            finish=Instant.now();
+            tempo=Duration.between(start, finish).toMinutes();
+            System.out.println("Tempo de execução: "+ tempo+" minutos");
             
             System.out.println("===> Modelo MLP<===");
             // Geração e teste do modelo MLP
             //mlp=geraModeloBackMLP(treino,optMLP);
-            //evalMLP=testaModeloEvaluationFile(mlp,treino,teste,file);
-            
+            //evalMLP=testaModeloEvaluationFile(mlp,treino,teste,file);                        
             
         }
+        fwriter.close();
     }
 
     
@@ -2223,6 +2240,7 @@ public class BenchmarkIDS {
                 break;
             case "cenario1":
                 cenario1();
+                break;
             default:
                 showHelp();
                 System.exit(0);
