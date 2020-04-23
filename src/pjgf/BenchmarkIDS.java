@@ -2016,7 +2016,7 @@ public class BenchmarkIDS {
         //String dados2="C:\\Developer\\Dados4Testes\\Dia1NormAt2.csv";
         String report="C:\\Developer\\Dados4Testes\\Reports\\BenchIDSCenario"+Integer.toString(cenario)+".txt";
         String modelosPath="C:\\Developer\\Dados4Testes\\Modelos\\";
-        String linha,nomefich1,nome;
+        String linha;
         
         // Indice da classe para tráfego malicioso (o indice é zero-based)
         int classeMalicioso=1;
@@ -2059,11 +2059,7 @@ public class BenchmarkIDS {
             
             System.out.println("===> Modelo CLONALG<===");
             // Geração e teste do modelo CLONALG
-            clonalg=geraModeloCLONALG(treino,optCLONALG);
-            
-            // Guarda modelo CLONALG para uso no ensemble
-            nomefich1=modelosPath+"Cenario"+Integer.toString(cenario)+"CLONALG";           
-            SerializationHelper.write(nomefich1,clonalg);
+            clonalg=geraModeloCLONALG(treino,optCLONALG);                        
             
             evalCLONALG=testaModeloEvaluation(clonalg,treino,teste); 
             
@@ -2081,11 +2077,7 @@ public class BenchmarkIDS {
             evalLVQ=testaModeloEvaluation(lvq,treino,teste);
             //finish=Instant.now();
             //tempo=Duration.between(start, finish).toMinutes();
-            //System.out.println("Tempo de execução: "+ tempo+" minutos");
-            
-            // Guarda modelo LVQ para uso no ensemble
-            nomefich1=modelosPath+"Cenario"+Integer.toString(cenario)+"LVQ";           
-            SerializationHelper.write(nomefich1,lvq);
+            //System.out.println("Tempo de execução: "+ tempo+" minutos");                        
             
             // Escreve dados no ficheiro
             accuracy=calculaAccuracy(evalLVQ,classeMalicioso);
@@ -2095,11 +2087,7 @@ public class BenchmarkIDS {
             //System.out.println("===> Modelo MLP<===");
             // Geração e teste do modelo MLP
             //mlp=geraModeloBackMLP(treino,optMLP);
-            //evalMLP=testaModeloEvaluationFile(mlp,treino,teste,file); 
-            
-            // Guarda modelo MLP para uso no ensemble
-            //nomefich1=modelosPath+"Cenario"+Integer.toString(cenario)+"MLP";           
-            //SerializationHelper.write(nomefich1,mlp);
+            //evalMLP=testaModeloEvaluationFile(mlp,treino,teste,file);                         
             
             // Escreve dados no ficheiro
             //accuracy=calculaAccuracy(evalMLP,classeMalicioso);
@@ -2118,26 +2106,14 @@ public class BenchmarkIDS {
         
             System.out.println("Gerando o Classificador Ensemble");
             
-            // Adiciona CLONALG
-            nome=modelosPath+"Cenario"+Integer.toString(cenario)+"CLONALG";
-            cls=(Classifier)weka.core.SerializationHelper.read(nome);                
-
-            System.out.println("Adicionando o modelo "+nome);
-            ensemble.addPreBuiltClassifier(cls);
+            // Adiciona CLONALG          
+            ensemble.addPreBuiltClassifier(clonalg);
             
-            // Adiciona LVQ
-            nome=modelosPath+"Cenario"+Integer.toString(cenario)+"LVQ";
-            cls=(Classifier)weka.core.SerializationHelper.read(nome);                
-
-            System.out.println("Adicionando o modelo "+nome);
-            ensemble.addPreBuiltClassifier(cls);
+            // Adiciona LVQ           
+            ensemble.addPreBuiltClassifier(lvq);
             
-            // Adiciona MLP
-            //nome=modelosPath+"Cenario"+Integer.toString(cenario)+"MLP";
-            //cls=(Classifier)weka.core.SerializationHelper.read(nome);
-
-            //System.out.println("Adicionando o modelo "+nome);
-            //ensemble.addPreBuiltClassifier(cls);
+            // Adiciona MLP            
+            //ensemble.addPreBuiltClassifier(mlp);
             
             evalEnsemble=testaModeloEvaluation(ensemble,treino,teste); 
             
