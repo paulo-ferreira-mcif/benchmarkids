@@ -1994,9 +1994,12 @@ public class BenchmarkIDS {
     /**
      * Função para executar o cenário 1
      * Não é necessário pré-processar os dados, pois já veem processados do fluxo de geração
+     * @param cenario - numero do cenario
+     * @param dados1 - ficheiro de dados para treino
+     * @param dados2 - ficheiro de dados para teste
      * @throws java.io.IOException
      */
-    public static void cenario1() throws IOException{
+    public static void cenarios(int cenario,String dados1,String dados2) throws IOException{
         
         Instances dadosTreino,dadosTeste,treino,teste;
         Classifier clonalg,mlp,lvq;
@@ -2009,9 +2012,9 @@ public class BenchmarkIDS {
         
         String [] optCLONALG,optMLP,optLVQ;
         
-        String dados1="C:\\Developer\\Dados4Testes\\Dia1NormAt1.csv";
-        String dados2="C:\\Developer\\Dados4Testes\\Dia1NormAt2.csv";
-        String report="C:\\Developer\\Dados4Testes\\Reports\\BenchIDSCenario1.txt";
+        //String dados1="C:\\Developer\\Dados4Testes\\Dia1NormAt1.csv";
+        //String dados2="C:\\Developer\\Dados4Testes\\Dia1NormAt2.csv";
+        String report="C:\\Developer\\Dados4Testes\\Reports\\BenchIDSCenario"+Integer.toString(cenario)+".txt";
         String linha;
         
         // Indice da classe para tráfego malicioso (o indice é zero-based)
@@ -2021,6 +2024,8 @@ public class BenchmarkIDS {
         FileWriter fwriter=new FileWriter(report);
         //PrintWriter pw=null;
         
+        // Para gerar dados de treino e teste diferentes, para garantir variedade e
+        // significancia estatística
         int[] seeds={1,5,10,23,34,47,55,69,88,93};
         
         dadosTreino=abreDataset(dados1);
@@ -2033,8 +2038,14 @@ public class BenchmarkIDS {
             System.out.println("====> Valor do Seed: "+seed);
             //fwriter.write("====> Valor do Seed: "+seed+"\n\n");
             
+            // Total de 200k linhas
+            // 70% para treino (140000)
+            // 30% para teste (60000)
             treino=divideDataset(dadosTreino,140000,seed);
             teste=divideDataset(dadosTeste,60000,seed);
+            
+            // As opções dos modelos foram seleccionadas com base nos testes
+            // feitos atraves deata aplicação (opções training <algoritmo> e test <algoritmo>
             
             // Opções CLONALG
             optCLONALG=geraOptCLONALG(300,0.3,40,0.2,150,30,seed);
@@ -2150,6 +2161,8 @@ public class BenchmarkIDS {
         ArrayList predictions;
                 
         Classifier modelo;
+        
+        String dados1,dados2;
         
         // Variáveis para opções dos modelos CLONALG
         //String[] optCLONALG1,optCLONALG2,optCLONALG3;
@@ -2301,7 +2314,14 @@ public class BenchmarkIDS {
                 setup(fich1,fich2,200000,globalSeed);
                 break;
             case "cenario1":
-                cenario1();
+                dados1="C:\\Developer\\Dados4Testes\\Dia1NormAt1.csv";
+                dados2="C:\\Developer\\Dados4Testes\\Dia1NormAt2.csv";
+                cenarios(1,dados1,dados2);
+                break;
+            case "cenario4":
+                dados1="C:\\Developer\\Dados4Testes\\Dia1NormAtaques.csv";
+                dados2="C:\\Developer\\Dados4Testes\\Dia2NormAtaques.csv";
+                cenarios(4,dados1,dados2);
                 break;
             default:
                 showHelp();
