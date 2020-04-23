@@ -1991,7 +1991,7 @@ public class BenchmarkIDS {
      */
     public static void cenario1(){
         
-        Instances dadosTreino,dadosTeste;
+        Instances dadosTreino,dadosTeste,treino,teste;
         Classifier clonalg,mlp,lvq;
         Vote ensemble;
         Evaluation evalCLONALG,evalMLP,evalLVQ;
@@ -2015,8 +2015,8 @@ public class BenchmarkIDS {
             
             System.out.println("====> Valor do Seed: "+seed);
             
-            dadosTreino=divideDataset(dadosTreino,140000,seed);
-            dadosTeste=divideDataset(dadosTeste,60000,seed);
+            treino=divideDataset(dadosTreino,140000,seed);
+            teste=divideDataset(dadosTeste,60000,seed);
             
             // Opções CLONALG
             optCLONALG=geraOptCLONALG(300,0.3,40,0.2,150,30,seed);
@@ -2029,18 +2029,18 @@ public class BenchmarkIDS {
             
             System.out.println("===> Modelo CLONALG<===");
             // Geração e teste do modelo CLONALG
-            clonalg=geraModeloCLONALG(dadosTreino,optCLONALG);
-            evalCLONALG=testaModeloEvaluationFile(clonalg,dadosTreino,dadosTeste,file);
+            //clonalg=geraModeloCLONALG(treino,optCLONALG);
+            //evalCLONALG=testaModeloEvaluationFile(clonalg,treino,teste,file);            
             
             System.out.println("===> Modelo LVQ<===");
             // Geração e teste do modelo LVQ
-            lvq=geraModeloLVQ(dadosTreino,optLVQ);
-            evalLVQ=testaModeloEvaluationFile(lvq,dadosTreino,dadosTeste,file);
+            lvq=geraModeloLVQ(treino,optLVQ);
+            evalLVQ=testaModeloEvaluationFile(lvq,treino,teste,file);
             
             System.out.println("===> Modelo MLP<===");
             // Geração e teste do modelo MLP
-            mlp=geraModeloBackMLP(dadosTreino,optMLP);
-            evalMLP=testaModeloEvaluationFile(mlp,dadosTreino,dadosTeste,file);
+            //mlp=geraModeloBackMLP(treino,optMLP);
+            //evalMLP=testaModeloEvaluationFile(mlp,treino,teste,file);
             
             
         }
