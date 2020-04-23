@@ -1128,7 +1128,7 @@ public class BenchmarkIDS {
      * @param dadosTeste - dados de teste
      * @return  - devolve a Evaluation
      */
-    public static Evaluation testaModeloEvaluation(Classifier modelo,Instances dadosTreino,Instances dadosTeste) {
+    public static Evaluation testaModeloEvaluation_Old(Classifier modelo,Instances dadosTreino,Instances dadosTeste) {
         
         Evaluation eval;
         ArrayList predictions;
@@ -1165,14 +1165,14 @@ public class BenchmarkIDS {
      * @param file
      * @return 
      */
-    public static Evaluation testaModeloEvaluationFile(Classifier modelo,Instances dadosTreino,Instances dadosTeste,FileWriter file) {
+    public static Evaluation testaModeloEvaluation(Classifier modelo,Instances dadosTreino,Instances dadosTeste) {
         
         Evaluation eval;
         ArrayList predictions;
 
         //FileWriter writer;
         // predictions=new ArrayList();
-        PrintWriter printer =null; 
+        //PrintWriter printer =null; 
         
         try{              
             eval=new Evaluation(dadosTreino);
@@ -1188,10 +1188,10 @@ public class BenchmarkIDS {
             //file.write(eval.toSummaryString("===> Sumario estatistico <=== ",true));
             System.out.println(eval.toClassDetailsString("===> Medidas de precisao <==="));
             //printer.println(eval.toClassDetailsString("===> Medidas de precisao <==="));
-            file.write(eval.toClassDetailsString("===> Medidas de precisao <==="));
+            //file.write(eval.toClassDetailsString("===> Medidas de precisao <===")+"\n\n");
             System.out.println(eval.toMatrixString("===> Matriz Confusão <==="));
             //printer.println(eval.toMatrixString("===> Matriz Confusão <==="));
-            file.write(eval.toMatrixString("===> Matriz Confusão <==="));
+            //file.write(eval.toMatrixString("===> Matriz Confusão <===")+"\n\n\n");
             //System.out.println("Recall: "+eval.recall(0)+"-"+eval.recall(1));
             //printer.println("Recall: "+eval.recall(0)+"-"+eval.recall(1));
             //predictions=eval.predictions();           
@@ -1202,11 +1202,11 @@ public class BenchmarkIDS {
             System.out.println("Error: " + ex);
             System.exit(1);
             return null;
-        } finally{
+        } /* finally{
             if (printer != null){
                 printer.close();
             }
-        }
+        }*/
     }
     
     
@@ -2005,12 +2005,17 @@ public class BenchmarkIDS {
         
         Instant start,finish;
         long tempo;
+        double accuracy;
         
         String [] optCLONALG,optMLP,optLVQ;
         
         String dados1="C:\\Developer\\Dados4Testes\\Dia1NormAt1.csv";
         String dados2="C:\\Developer\\Dados4Testes\\Dia1NormAt2.csv";
         String report="C:\\Developer\\Dados4Testes\\Reports\\BenchIDSCenario1.txt";
+        String linha;
+        
+        // Indice da classe para tráfego malicioso (o indice é zero-based)
+        int classeMalicioso=1;
         
         //File file=new File(report);
         FileWriter fwriter=new FileWriter(report);
@@ -2021,10 +2026,12 @@ public class BenchmarkIDS {
         dadosTreino=abreDataset(dados1);
         dadosTeste=abreDataset(dados2);
         
+        // Escreve Cabeçalho do ficheiro
+        fwriter.write("Algoritmo;Seed;TruePositiveRate;FalsePositiveRate;TrueNegativeRate;FalseNegativeRate;Precision;Recall;Accuracy;F1\n");
         for (int seed: seeds){
             
             System.out.println("====> Valor do Seed: "+seed);
-            fwriter.write("====> Valor do Seed: "+seed+"\n\n");
+            //fwriter.write("====> Valor do Seed: "+seed+"\n\n");
             
             treino=divideDataset(dadosTreino,140000,seed);
             teste=divideDataset(dadosTeste,60000,seed);
@@ -2044,15 +2051,20 @@ public class BenchmarkIDS {
             //evalCLONALG=testaModeloEvaluationFile(clonalg,treino,teste,file);            
             
             System.out.println("===> Modelo LVQ<===");
-            fwriter.write("====> Modelo LVQ\n\n");
+            //fwriter.write("====> Algoritmo: LVQ  => Seed: "+seed+"\n\n");
             // Geração e teste do modelo LVQ
             
-            start=Instant.now();
+            //start=Instant.now();
             lvq=geraModeloLVQ(treino,optLVQ);
-            evalLVQ=testaModeloEvaluationFile(lvq,treino,teste,fwriter);
-            finish=Instant.now();
-            tempo=Duration.between(start, finish).toMinutes();
-            System.out.println("Tempo de execução: "+ tempo+" minutos");
+            evalLVQ=testaModeloEvaluation(lvq,treino,teste);
+            //finish=Instant.now();
+            //tempo=Duration.between(start, finish).toMinutes();
+            //System.out.println("Tempo de execução: "+ tempo+" minutos");
+            
+            accuracy=calculaAccuracy(evalLVQ,classeMalicioso);
+            linha=constroiLinha("LVQ",seed,evalLVQ,accuracy,classeMalicioso);
+            
+            fwriter.write(linha);
             
             System.out.println("===> Modelo MLP<===");
             // Geração e teste do modelo MLP
@@ -2062,8 +2074,50 @@ public class BenchmarkIDS {
         }
         fwriter.close();
     }
-
     
+
+    /**
+     * Função para calcular a métrica Accuracy
+     * @param eval
+     * @param classIndex
+     * 
+     * @return 
+     */
+    public static double calculaAccuracy(Evaluation eval,int classIndex){
+        double acc;
+        
+        double tp,tn,fp,fn;
+        
+        tp=eval.numTruePositives(classIndex);
+        tn=eval.numTrueNegatives(classIndex);
+        fp=eval.numFalsePositives(classIndex);
+        fn=eval.numFalseNegatives(classIndex);
+        
+        acc=(tp + tn)/(tp+tn+fp+fn);
+        
+        return acc;
+    }
+    
+    
+    /**
+     * Constroi Linha a inserir no ficheiro txt
+     * @param algoritmo
+     * @param seed
+     * @param eval
+     * @param acc
+     * @param classIndex
+     * @return 
+     */
+    public static String constroiLinha(String algoritmo,int seed,Evaluation eval,double acc,int classIndex){
+        
+        String linha;
+        String sep=";";  // separador
+        linha=algoritmo+sep+seed+sep+eval.truePositiveRate(classIndex)+sep+eval.falsePositiveRate(classIndex)+sep;
+        linha+=eval.trueNegativeRate(classIndex)+sep+eval.falseNegativeRate(classIndex)+sep;
+        linha+=eval.precision(classIndex)+sep+eval.recall(classIndex)+sep+acc+sep+eval.fMeasure(classIndex)+"\n";
+                
+        return linha;
+    }
     
     /**
      * 
