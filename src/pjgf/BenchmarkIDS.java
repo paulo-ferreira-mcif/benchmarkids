@@ -7,6 +7,8 @@ package pjgf;
 
 import java.awt.BorderLayout;
 import java.io.File;
+import java.io.FileWriter;
+import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.List;
@@ -1113,7 +1115,7 @@ public class BenchmarkIDS {
     }
      
      
-     // Testa o modelo (dados de teste) e devolve predicoes
+    // Testa o modelo (dados de teste) e devolve predicoes
     // A ideia é devolver um Evaluation, que possa, depois, ser tratada no
     // programa principal
     /**
@@ -1146,6 +1148,59 @@ public class BenchmarkIDS {
             System.exit(1);
             return null;
         } 
+    }
+    
+    
+    // Testa o modelo (dados de teste) e devolve predicoes
+    // A ideia é devolver um Evaluation, que possa, depois, ser tratada no
+    // programa principal
+    /**
+     * Função para testar um modelo (classificador), guardando os resultados no ficheiro indicado
+     * @param modelo
+     * @param dadosTreino
+     * @param dadosTeste
+     * @param file
+     * @return 
+     */
+    public static Evaluation testaModeloEvaluationFile(Classifier modelo,Instances dadosTreino,Instances dadosTeste,File file) {
+        
+        Evaluation eval;
+        ArrayList predictions;
+
+        FileWriter writer;
+        // predictions=new ArrayList();
+        PrintWriter printer =null; 
+        
+        try{              
+            eval=new Evaluation(dadosTreino);
+
+            eval.evaluateModel(modelo, dadosTeste); 
+            
+            writer=new FileWriter(file,true);
+            
+            printer=new PrintWriter(writer);
+            
+            System.out.println(eval.toSummaryString("===> Sumario estatistico <=== ",true));
+            printer.println(eval.toSummaryString("===> Sumario estatistico <=== ",true));
+            System.out.println(eval.toClassDetailsString("===> Medidas de precisao <==="));
+            printer.println(eval.toClassDetailsString("===> Medidas de precisao <==="));
+            System.out.println(eval.toMatrixString("===> Matriz Confusão <==="));
+            printer.println(eval.toMatrixString("===> Matriz Confusão <==="));
+            System.out.println("Recall: "+eval.recall(0)+"-"+eval.recall(1));
+            printer.println("Recall: "+eval.recall(0)+"-"+eval.recall(1));
+            predictions=eval.predictions();           
+
+            return eval;
+        } catch (Exception ex) {
+            Logger.getLogger(BenchmarkIDS.class.getName()).log(Level.SEVERE, null, ex);
+            System.out.println("Error: " + ex);
+            System.exit(1);
+            return null;
+        } finally{
+            if (printer != null){
+                printer.close();
+            }
+        }
     }
     
     
@@ -1927,6 +1982,63 @@ public class BenchmarkIDS {
             System.out.println("Error: " + ex);
             System.exit(1);
             return (null);
+        }
+    }
+    
+    /**
+     * Função para executar o cenário 1
+     * Não é necessário pré-processar os dados, pois já veem processados do fluxo de geração
+     */
+    public static void cenario1(){
+        
+        Instances dadosTreino,dadosTeste;
+        Classifier clonalg,mlp,lvq;
+        Vote ensemble;
+        Evaluation evalCLONALG,evalMLP,evalLVQ;
+        
+        String [] optCLONALG,optMLP,optLVQ;
+        
+        String dados1="C:\\Developer\\Dados4Testes\\Dia1NormAt1.csv";
+        String dados2="C:\\Developer\\Dados4Testes\\Dia1NormAt2.csv";
+        String report="C:\\Developer\\Dados4Testes\\Reports\\BenchIDSCenario1.txt";
+        
+        File file=new File(report);
+        
+        PrintWriter pw=null;
+        
+        int[] seeds={1,5,10,23,34,47,55,69,88,93};
+        
+        dadosTreino=abreDataset(dados1);
+        dadosTeste=abreDataset(dados2);
+        
+        for (int seed: seeds){
+            dadosTreino=divideDataset(dadosTreino,140000,seed);
+            dadosTeste=divideDataset(dadosTeste,60000,seed);
+            
+            // Opções CLONALG
+            optCLONALG=geraOptCLONALG(300,0.3,40,0.2,150,30,seed);
+            
+            // Opções MLP
+            optMLP=geraOptBackMLP("a",0.1,0.3,500,seed);
+            
+            // Opções LVQ
+            optLVQ=geraOptLVQ3(0.1,1,1,0.3,50,2500,true,0.2,seed);
+            
+            // Geração e teste do modelo CLONALG
+            clonalg=geraModeloCLONALG(dadosTreino,optCLONALG);
+            evalCLONALG=testaModeloEvaluationFile(clonalg,dadosTreino,dadosTeste,file);
+            
+            // Geração e teste do modelo LVQ
+            lvq=geraModeloLVQ(dadosTreino,optLVQ);
+            evalLVQ=testaModeloEvaluationFile(lvq,dadosTreino,dadosTeste,file);
+            
+            // Geração e teste do modelo MLP
+            mlp=geraModeloBackMLP(dadosTreino,optMLP);
+            evalMLP=testaModeloEvaluationFile(mlp,dadosTreino,dadosTeste,file);
+            
+            // Escreve resultados no ficheiro de saida
+            
+            
         }
     }
 
