@@ -2217,6 +2217,8 @@ public class BenchmarkIDS {
                 String fich2=args[2];
                 setup(fich1,fich2,200000,globalSeed);
                 break;
+            case "cenario1":
+                cenario1();
             default:
                 showHelp();
                 System.exit(0);
