@@ -2012,6 +2012,9 @@ public class BenchmarkIDS {
         dadosTeste=abreDataset(dados2);
         
         for (int seed: seeds){
+            
+            System.out.println("====> Valor do Seed: "+seed);
+            
             dadosTreino=divideDataset(dadosTreino,140000,seed);
             dadosTeste=divideDataset(dadosTeste,60000,seed);
             
@@ -2024,19 +2027,20 @@ public class BenchmarkIDS {
             // Opções LVQ
             optLVQ=geraOptLVQ3(0.1,1,1,0.3,50,2500,true,0.2,seed);
             
+            System.out.println("===> Modelo CLONALG<===");
             // Geração e teste do modelo CLONALG
             clonalg=geraModeloCLONALG(dadosTreino,optCLONALG);
             evalCLONALG=testaModeloEvaluationFile(clonalg,dadosTreino,dadosTeste,file);
             
+            System.out.println("===> Modelo LVQ<===");
             // Geração e teste do modelo LVQ
             lvq=geraModeloLVQ(dadosTreino,optLVQ);
             evalLVQ=testaModeloEvaluationFile(lvq,dadosTreino,dadosTeste,file);
             
+            System.out.println("===> Modelo MLP<===");
             // Geração e teste do modelo MLP
             mlp=geraModeloBackMLP(dadosTreino,optMLP);
             evalMLP=testaModeloEvaluationFile(mlp,dadosTreino,dadosTeste,file);
-            
-            // Escreve resultados no ficheiro de saida
             
             
         }
