@@ -2047,8 +2047,13 @@ public class BenchmarkIDS {
             
             System.out.println("===> Modelo CLONALG<===");
             // Geração e teste do modelo CLONALG
-            //clonalg=geraModeloCLONALG(treino,optCLONALG);
-            //evalCLONALG=testaModeloEvaluationFile(clonalg,treino,teste,file);            
+            clonalg=geraModeloCLONALG(treino,optCLONALG);
+            evalCLONALG=testaModeloEvaluation(clonalg,treino,teste); 
+            
+            // Escreve dados no ficheiro
+            accuracy=calculaAccuracy(evalCLONALG,classeMalicioso);
+            linha=constroiLinha("CLONALG",seed,evalCLONALG,accuracy,classeMalicioso);            
+            fwriter.write(linha);
             
             System.out.println("===> Modelo LVQ<===");
             //fwriter.write("====> Algoritmo: LVQ  => Seed: "+seed+"\n\n");
@@ -2061,12 +2066,12 @@ public class BenchmarkIDS {
             //tempo=Duration.between(start, finish).toMinutes();
             //System.out.println("Tempo de execução: "+ tempo+" minutos");
             
+            // Escreve dados no ficheiro
             accuracy=calculaAccuracy(evalLVQ,classeMalicioso);
-            linha=constroiLinha("LVQ",seed,evalLVQ,accuracy,classeMalicioso);
-            
+            linha=constroiLinha("LVQ",seed,evalLVQ,accuracy,classeMalicioso);            
             fwriter.write(linha);
             
-            System.out.println("===> Modelo MLP<===");
+            //System.out.println("===> Modelo MLP<===");
             // Geração e teste do modelo MLP
             //mlp=geraModeloBackMLP(treino,optMLP);
             //evalMLP=testaModeloEvaluationFile(mlp,treino,teste,file);                        
@@ -2115,6 +2120,9 @@ public class BenchmarkIDS {
         linha=algoritmo+sep+seed+sep+eval.truePositiveRate(classIndex)+sep+eval.falsePositiveRate(classIndex)+sep;
         linha+=eval.trueNegativeRate(classIndex)+sep+eval.falseNegativeRate(classIndex)+sep;
         linha+=eval.precision(classIndex)+sep+eval.recall(classIndex)+sep+acc+sep+eval.fMeasure(classIndex)+"\n";
+        
+        // substitui ponto decimal por vírgula
+        linha=linha.replace('.', ',');
                 
         return linha;
     }
