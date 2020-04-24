@@ -2049,7 +2049,7 @@ public class BenchmarkIDS {
             // feitos atraves deata aplicação (opções training <algoritmo> e test <algoritmo>
             
             // Opções CLONALG
-            optCLONALG=geraOptCLONALG(300,0.3,40,0.2,150,30,seed);
+            optCLONALG=geraOptCLONALG(120,0.3,40,0.2,80,10,seed);
             
             // Opções MLP
             optMLP=geraOptBackMLP("a",0.1,0.3,500,seed);
@@ -2351,6 +2351,16 @@ public class BenchmarkIDS {
             case "cenario1":
                 dados1="C:\\Developer\\Dados4Testes\\Dia1NormAt1.csv";
                 dados2="C:\\Developer\\Dados4Testes\\Dia1NormAt2.csv";
+                cenarios(1,dados1,dados2);
+                break;
+            case "cenario2":
+                dados1="C:\\Developer\\Dados4Testes\\Dia1NormAt1.csv";
+                dados2="C:\\Developer\\Dados4Testes\\Dia2NormAt1.csv";
+                cenarios(2,dados1,dados2);
+                break;
+            case "cenario3":
+                dados1="C:\\Developer\\Dados4Testes\\Dia1NormAt2.csv";
+                dados2="C:\\Developer\\Dados4Testes\\Dia2NormAt2.csv";
                 cenarios(1,dados1,dados2);
                 break;
             case "cenario4":
