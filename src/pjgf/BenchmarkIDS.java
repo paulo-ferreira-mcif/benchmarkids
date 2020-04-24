@@ -2086,13 +2086,13 @@ public class BenchmarkIDS {
             
             //System.out.println("===> Modelo MLP<===");
             // Geração e teste do modelo MLP
-            //mlp=geraModeloBackMLP(treino,optMLP);
-            //evalMLP=testaModeloEvaluationFile(mlp,treino,teste,file);                         
+            mlp=geraModeloBackMLP(treino,optMLP);
+            evalMLP=testaModeloEvaluation(mlp,treino,teste);                         
             
             // Escreve dados no ficheiro
-            //accuracy=calculaAccuracy(evalMLP,classeMalicioso);
-            //linha=constroiLinha("MLP",seed,evalMLP,accuracy,classeMalicioso);            
-            //fwriter.write(linha);
+            accuracy=calculaAccuracy(evalMLP,classeMalicioso);
+            linha=constroiLinha("MLP",seed,evalMLP,accuracy,classeMalicioso);            
+            fwriter.write(linha);
             
             // Ensemble
             
@@ -2113,7 +2113,7 @@ public class BenchmarkIDS {
             ensemble.addPreBuiltClassifier(lvq);
             
             // Adiciona MLP            
-            //ensemble.addPreBuiltClassifier(mlp);
+            ensemble.addPreBuiltClassifier(mlp);
             
             evalEnsemble=testaModeloEvaluation(ensemble,treino,teste); 
             
