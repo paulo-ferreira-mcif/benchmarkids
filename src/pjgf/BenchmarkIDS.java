@@ -2084,7 +2084,7 @@ public class BenchmarkIDS {
             linha=constroiLinha("LVQ",seed,evalLVQ,accuracy,classeMalicioso);            
             fwriter.write(linha);
             
-            //System.out.println("===> Modelo MLP<===");
+            System.out.println("===> Modelo MLP<===");
             // Geração e teste do modelo MLP
             mlp=geraModeloBackMLP(treino,optMLP);
             evalMLP=testaModeloEvaluation(mlp,treino,teste);                         
