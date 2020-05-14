@@ -2014,7 +2014,7 @@ public class BenchmarkIDS {
         
         //String dados1="C:\\Developer\\Dados4Testes\\Dia1NormAt1.csv";
         //String dados2="C:\\Developer\\Dados4Testes\\Dia1NormAt2.csv";
-        String report="C:\\Developer\\Dados4Testes\\Reports\\BenchIDSCenario"+Integer.toString(cenario)+".txt";
+        String report="C:\\Developer\\Dados4Testes\\Reports\\BenchIDSCenarioLVQ15_21"+Integer.toString(cenario)+".txt";
         String modelosPath="C:\\Developer\\Dados4Testes\\Modelos\\";
         String linha;
         
@@ -2057,16 +2057,16 @@ public class BenchmarkIDS {
             // Opções LVQ
             optLVQ=geraOptLVQ3(0.1,1,1,0.3,50,2500,true,0.2,seed);
             
-            System.out.println("===> Modelo CLONALG<===");
+            //System.out.println("===> Modelo CLONALG<===");
             // Geração e teste do modelo CLONALG
-            clonalg=geraModeloCLONALG(treino,optCLONALG);                        
+            //clonalg=geraModeloCLONALG(treino,optCLONALG);                        
             
-            evalCLONALG=testaModeloEvaluation(clonalg,treino,teste); 
+            //evalCLONALG=testaModeloEvaluation(clonalg,treino,teste); 
             
             // Escreve dados no ficheiro
-            accuracy=calculaAccuracy(evalCLONALG,classeMalicioso);
-            linha=constroiLinha("CLONALG",seed,evalCLONALG,accuracy,classeMalicioso);            
-            fwriter.write(linha);
+            //accuracy=calculaAccuracy(evalCLONALG,classeMalicioso);
+            //linha=constroiLinha("CLONALG",seed,evalCLONALG,accuracy,classeMalicioso);            
+            //fwriter.write(linha);
             
             System.out.println("===> Modelo LVQ<===");
             //fwriter.write("====> Algoritmo: LVQ  => Seed: "+seed+"\n\n");
@@ -2084,43 +2084,43 @@ public class BenchmarkIDS {
             linha=constroiLinha("LVQ",seed,evalLVQ,accuracy,classeMalicioso);            
             fwriter.write(linha);
             
-            System.out.println("===> Modelo MLP<===");
+            //System.out.println("===> Modelo MLP<===");
             // Geração e teste do modelo MLP
-            mlp=geraModeloBackMLP(treino,optMLP);
-            evalMLP=testaModeloEvaluation(mlp,treino,teste);                         
+            //mlp=geraModeloBackMLP(treino,optMLP);
+            //evalMLP=testaModeloEvaluation(mlp,treino,teste);                         
             
             // Escreve dados no ficheiro
-            accuracy=calculaAccuracy(evalMLP,classeMalicioso);
-            linha=constroiLinha("MLP",seed,evalMLP,accuracy,classeMalicioso);            
-            fwriter.write(linha);
+            //accuracy=calculaAccuracy(evalMLP,classeMalicioso);
+            //linha=constroiLinha("MLP",seed,evalMLP,accuracy,classeMalicioso);            
+            //fwriter.write(linha);
             
             // Ensemble
             
-            System.out.println("===> Ensemble LVQ+CLONALG+MLP <===");
-            ensemble = new Vote();
+            //System.out.println("===> Ensemble LVQ+CLONALG+MLP <===");
+            //ensemble = new Vote();
         
-            SelectedTag tag = new SelectedTag(Vote.MAJORITY_VOTING_RULE,Vote.TAGS_RULES);
-            ensemble.setCombinationRule(tag);
+            //SelectedTag tag = new SelectedTag(Vote.MAJORITY_VOTING_RULE,Vote.TAGS_RULES);
+            //ensemble.setCombinationRule(tag);
         
-            ensemble.setSeed(seed);                    
+            //ensemble.setSeed(seed);                    
         
-            System.out.println("Gerando o Classificador Ensemble");
+            //System.out.println("Gerando o Classificador Ensemble");
             
             // Adiciona CLONALG          
-            ensemble.addPreBuiltClassifier(clonalg);
+            //ensemble.addPreBuiltClassifier(clonalg);
             
             // Adiciona LVQ           
-            ensemble.addPreBuiltClassifier(lvq);
+            //ensemble.addPreBuiltClassifier(lvq);
             
             // Adiciona MLP            
-            ensemble.addPreBuiltClassifier(mlp);
+            //ensemble.addPreBuiltClassifier(mlp);
             
-            evalEnsemble=testaModeloEvaluation(ensemble,treino,teste); 
+            //evalEnsemble=testaModeloEvaluation(ensemble,treino,teste); 
             
             // Escreve dados no ficheiro
-            accuracy=calculaAccuracy(evalEnsemble,classeMalicioso);
-            linha=constroiLinha("Ensemble",seed,evalEnsemble,accuracy,classeMalicioso);            
-            fwriter.write(linha);
+            //accuracy=calculaAccuracy(evalEnsemble,classeMalicioso);
+            //linha=constroiLinha("Ensemble",seed,evalEnsemble,accuracy,classeMalicioso);            
+            //fwriter.write(linha);
                         
         }
         fwriter.close();
