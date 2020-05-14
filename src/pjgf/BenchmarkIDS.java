@@ -12,6 +12,7 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import java.time.Duration;
 import java.time.Instant;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.List;
@@ -2006,15 +2007,15 @@ public class BenchmarkIDS {
         Vote ensemble;
         Evaluation evalCLONALG,evalMLP,evalLVQ,evalEnsemble;
         
-        Instant start,finish;
-        long tempo;
+        //Instant start,finish;
+        //long tempo;
         double accuracy;
         
         String [] optCLONALG,optMLP,optLVQ;
         
         //String dados1="C:\\Developer\\Dados4Testes\\Dia1NormAt1.csv";
         //String dados2="C:\\Developer\\Dados4Testes\\Dia1NormAt2.csv";
-        String report="C:\\Developer\\Dados4Testes\\Reports\\BenchIDSCenarioLVQ15_21"+Integer.toString(cenario)+".txt";
+        String report="C:\\Developer\\Dados4Testes\\Reports\\BenchIDSCenario"+Integer.toString(cenario)+".txt";
         String modelosPath="C:\\Developer\\Dados4Testes\\Modelos\\";
         String linha;
         
@@ -2029,6 +2030,9 @@ public class BenchmarkIDS {
         // significancia estatística
         int[] seeds={1,5,10,23,34,47,55,69,88,93};
         
+        System.out.println("====> Início: "+LocalDateTime.now()); 
+        
+        System.out.println("Abrindo os ficheiros de dados \n");
         dadosTreino=abreDataset(dados1);
         dadosTeste=abreDataset(dados2);
         
@@ -2057,16 +2061,17 @@ public class BenchmarkIDS {
             // Opções LVQ
             //optLVQ=geraOptLVQ3(0.1,1,1,0.3,50,2500,true,0.2,seed); opções erradas...
             optLVQ=geraOptLVQ3(0.1,1,1,0.3,90,4500,false,0.2,seed);
-            //System.out.println("===> Modelo CLONALG<===");
-            // Geração e teste do modelo CLONALG
-            //clonalg=geraModeloCLONALG(treino,optCLONALG);                        
             
-            //evalCLONALG=testaModeloEvaluation(clonalg,treino,teste); 
+            System.out.println("===> Modelo CLONALG<===");
+            // Geração e teste do modelo CLONALG
+            clonalg=geraModeloCLONALG(treino,optCLONALG);                        
+            
+            evalCLONALG=testaModeloEvaluation(clonalg,treino,teste); 
             
             // Escreve dados no ficheiro
-            //accuracy=calculaAccuracy(evalCLONALG,classeMalicioso);
-            //linha=constroiLinha("CLONALG",seed,evalCLONALG,accuracy,classeMalicioso);            
-            //fwriter.write(linha);
+            accuracy=calculaAccuracy(evalCLONALG,classeMalicioso);
+            linha=constroiLinha("CLONALG",seed,evalCLONALG,accuracy,classeMalicioso);            
+            fwriter.write(linha);
             
             System.out.println("===> Modelo LVQ<===");
             //fwriter.write("====> Algoritmo: LVQ  => Seed: "+seed+"\n\n");
@@ -2084,46 +2089,47 @@ public class BenchmarkIDS {
             linha=constroiLinha("LVQ",seed,evalLVQ,accuracy,classeMalicioso);            
             fwriter.write(linha);
             
-            //System.out.println("===> Modelo MLP<===");
+            System.out.println("===> Modelo MLP<===");
             // Geração e teste do modelo MLP
-            //mlp=geraModeloBackMLP(treino,optMLP);
-            //evalMLP=testaModeloEvaluation(mlp,treino,teste);                         
+            mlp=geraModeloBackMLP(treino,optMLP);
+            evalMLP=testaModeloEvaluation(mlp,treino,teste);                         
             
             // Escreve dados no ficheiro
-            //accuracy=calculaAccuracy(evalMLP,classeMalicioso);
-            //linha=constroiLinha("MLP",seed,evalMLP,accuracy,classeMalicioso);            
-            //fwriter.write(linha);
+            accuracy=calculaAccuracy(evalMLP,classeMalicioso);
+            linha=constroiLinha("MLP",seed,evalMLP,accuracy,classeMalicioso);            
+            fwriter.write(linha);
             
             // Ensemble
             
-            //System.out.println("===> Ensemble LVQ+CLONALG+MLP <===");
-            //ensemble = new Vote();
+            System.out.println("===> Ensemble LVQ+CLONALG+MLP <===");
+            ensemble = new Vote();
         
-            //SelectedTag tag = new SelectedTag(Vote.MAJORITY_VOTING_RULE,Vote.TAGS_RULES);
-            //ensemble.setCombinationRule(tag);
+            SelectedTag tag = new SelectedTag(Vote.MAJORITY_VOTING_RULE,Vote.TAGS_RULES);
+            ensemble.setCombinationRule(tag);
         
-            //ensemble.setSeed(seed);                    
+            ensemble.setSeed(seed);                    
         
-            //System.out.println("Gerando o Classificador Ensemble");
+            System.out.println("Gerando o Classificador Ensemble");
             
             // Adiciona CLONALG          
-            //ensemble.addPreBuiltClassifier(clonalg);
+            ensemble.addPreBuiltClassifier(clonalg);
             
             // Adiciona LVQ           
-            //ensemble.addPreBuiltClassifier(lvq);
+            ensemble.addPreBuiltClassifier(lvq);
             
             // Adiciona MLP            
-            //ensemble.addPreBuiltClassifier(mlp);
+            ensemble.addPreBuiltClassifier(mlp);
             
-            //evalEnsemble=testaModeloEvaluation(ensemble,treino,teste); 
+            evalEnsemble=testaModeloEvaluation(ensemble,treino,teste); 
             
             // Escreve dados no ficheiro
-            //accuracy=calculaAccuracy(evalEnsemble,classeMalicioso);
-            //linha=constroiLinha("Ensemble",seed,evalEnsemble,accuracy,classeMalicioso);            
-            //fwriter.write(linha);
+            accuracy=calculaAccuracy(evalEnsemble,classeMalicioso);
+            linha=constroiLinha("Ensemble",seed,evalEnsemble,accuracy,classeMalicioso);            
+            fwriter.write(linha);
                         
         }
         fwriter.close();
+        System.out.println("====> Fim: "+LocalDateTime.now());
     }
     
 
@@ -2351,22 +2357,22 @@ public class BenchmarkIDS {
                 setup(fich1,fich2,200000,globalSeed);
                 break;
             case "cenario1":
-                dados1="C:\\Developer\\Dados4Testes\\Dia15NormAt1.csv";
-                dados2="C:\\Developer\\Dados4Testes\\Dia15NormAt2.csv";
+                dados1="C:\\Developer\\Dados4Testes\\Dia16NormAt1.csv";
+                dados2="C:\\Developer\\Dados4Testes\\Dia16NormAt2.csv";
                 cenarios(1,dados1,dados2);
                 break;
             case "cenario2":
-                dados1="C:\\Developer\\Dados4Testes\\Dia15NormAt1.csv";
+                dados1="C:\\Developer\\Dados4Testes\\Dia16NormAt1.csv";
                 dados2="C:\\Developer\\Dados4Testes\\Dia2NormAt1.csv";
                 cenarios(2,dados1,dados2);
                 break;
             case "cenario3":
-                dados1="C:\\Developer\\Dados4Testes\\Dia15NormAt2.csv";
+                dados1="C:\\Developer\\Dados4Testes\\Dia16NormAt2.csv";
                 dados2="C:\\Developer\\Dados4Testes\\Dia2NormAt2.csv";
                 cenarios(3,dados1,dados2);
                 break;
             case "cenario4":
-                dados1="C:\\Developer\\Dados4Testes\\Dia15NormAtaques.csv";
+                dados1="C:\\Developer\\Dados4Testes\\Dia16NormAtaques.csv";
                 dados2="C:\\Developer\\Dados4Testes\\Dia2NormAtaques.csv";
                 cenarios(4,dados1,dados2);
                 break;
