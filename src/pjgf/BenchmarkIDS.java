@@ -2357,22 +2357,22 @@ public class BenchmarkIDS {
                 setup(fich1,fich2,200000,globalSeed);
                 break;
             case "cenario1":
-                dados1="C:\\Developer\\Dados4Testes\\Dia16NormAt1.csv";
-                dados2="C:\\Developer\\Dados4Testes\\Dia16NormAt2.csv";
+                dados1="C:\\Developer\\Dados4Testes\\Dia15NormAt1.csv";
+                dados2="C:\\Developer\\Dados4Testes\\Dia15NormAt2.csv";
                 cenarios(1,dados1,dados2);
                 break;
             case "cenario2":
-                dados1="C:\\Developer\\Dados4Testes\\Dia16NormAt1.csv";
+                dados1="C:\\Developer\\Dados4Testes\\Dia15NormAt1.csv";
                 dados2="C:\\Developer\\Dados4Testes\\Dia2NormAt1.csv";
                 cenarios(2,dados1,dados2);
                 break;
             case "cenario3":
-                dados1="C:\\Developer\\Dados4Testes\\Dia16NormAt2.csv";
+                dados1="C:\\Developer\\Dados4Testes\\Dia15NormAt2.csv";
                 dados2="C:\\Developer\\Dados4Testes\\Dia2NormAt2.csv";
                 cenarios(3,dados1,dados2);
                 break;
             case "cenario4":
-                dados1="C:\\Developer\\Dados4Testes\\Dia16NormAtaques.csv";
+                dados1="C:\\Developer\\Dados4Testes\\Dia15NormAtaques.csv";
                 dados2="C:\\Developer\\Dados4Testes\\Dia2NormAtaques.csv";
                 cenarios(4,dados1,dados2);
                 break;
