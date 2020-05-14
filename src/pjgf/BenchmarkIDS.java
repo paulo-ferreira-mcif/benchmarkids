@@ -2033,7 +2033,7 @@ public class BenchmarkIDS {
         dadosTeste=abreDataset(dados2);
         
         // Escreve Cabeçalho do ficheiro
-        fwriter.write("Algoritmo;Seed;TruePositiveRate;FalsePositiveRate;TrueNegativeRate;FalseNegativeRate;Precision;Recall;Accuracy;F1\n");
+        fwriter.write("Algoritmo;Seed;TrueNegative;FalsePositive;FalseNegative;TruePositive;TruePositiveRate;FalsePositiveRate;TrueNegativeRate;FalseNegativeRate;Precision;Recall;Accuracy;F1\n");
         for (int seed: seeds){
             
             System.out.println("====> Valor do Seed: "+seed);
@@ -2163,7 +2163,9 @@ public class BenchmarkIDS {
         
         String linha;
         String sep=";";  // separador
-        linha=algoritmo+sep+seed+sep+eval.truePositiveRate(classIndex)+sep+eval.falsePositiveRate(classIndex)+sep;
+        linha=algoritmo+sep+seed+sep+eval.numTrueNegatives(classIndex)+sep+eval.numFalsePositives(classIndex)+sep;
+        linha+=eval.numFalseNegatives(classIndex)+sep+eval.numTruePositives(classIndex)+sep;
+        linha+=eval.truePositiveRate(classIndex)+sep+eval.falsePositiveRate(classIndex)+sep;
         linha+=eval.trueNegativeRate(classIndex)+sep+eval.falseNegativeRate(classIndex)+sep;
         linha+=eval.precision(classIndex)+sep+eval.recall(classIndex)+sep+acc+sep+eval.fMeasure(classIndex)+"\n";
         
