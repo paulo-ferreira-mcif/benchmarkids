@@ -2015,7 +2015,7 @@ public class BenchmarkIDS {
         
         //String dados1="C:\\Developer\\Dados4Testes\\Dia1NormAt1.csv";
         //String dados2="C:\\Developer\\Dados4Testes\\Dia1NormAt2.csv";
-        String report="C:\\Developer\\Dados4Testes\\Reports\\BenchIDSCenario"+Integer.toString(cenario)+".txt";
+        String report="C:\\Developer\\Dados4Testes\\Final\\Reports15_21\\BenchIDSCenario"+Integer.toString(cenario)+".txt";
         String modelosPath="C:\\Developer\\Dados4Testes\\Modelos\\";
         String linha;
         
