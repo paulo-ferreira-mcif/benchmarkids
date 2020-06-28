@@ -2376,6 +2376,16 @@ public class BenchmarkIDS {
                 dados2="C:\\Developer\\Dados4Testes\\Dia2NormAtaques.csv";
                 cenarios(4,dados1,dados2);
                 break;
+            case "cenario5":
+                dados2="C:\\Developer\\Dados4Testes\\Dia16NormAtaques.csv";
+                dados1="C:\\Developer\\Dados4Testes\\Dia2NormAtaques.csv";
+                cenarios(5,dados1,dados2);
+                break;
+            case "cenario6":
+                dados2="C:\\Developer\\Dados4Testes\\Dia15NormAtaques.csv";
+                dados1="C:\\Developer\\Dados4Testes\\Dia2NormAtaques.csv";
+                cenarios(6,dados1,dados2);
+                break;
             default:
                 showHelp();
                 System.exit(0);
