@@ -25,9 +25,14 @@ Starting from the parameters passed on the command line, open the corresponding 
 
 ## Compiling
 
-I compiled the code using Netbeans. 
+I compiled the code using Netbeans version 11.2
 
-It's absolutely necessary, for the success of the compilation, to install the Wekaclassalgos library. This library, originally developed by Jason Brownlee, is available in github at https://github.com/fracpete/wekaclassalgos
+It's absolutely necessary, for the compilation to succeed:
+
+* Include the Weka API, by means of including the file Weka.jar from your Weka installation directory
+* Include the Wekaclassalgos library. This library, originally developed by Jason Brownlee, is available in github at https://github.com/fracpete/wekaclassalgos
+
+For those using Maven, there's also a Maven dependency that deals with including Wekaclassalgos library (see https://github.com/fracpete/wekaclassalgos for more information)
 
 ## Usage
 
