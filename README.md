@@ -91,4 +91,10 @@ The valid values for the parameter **cenario** are :
 * cenario3 - will perform the defined tests for scenario 3
 * cenario4 - will perform the defined tests for scenario 4
 
+## Notes
+As mentioned before, this application was developed to meet specific requirements of my work. As such, some things were just simplified, like:
 
+- The location of the files is hardcoded
+- The algorithms used are just the ones I used on my work
+- The patametrization of each algorithm is also hardcoded
+- The name of the data files resembles what I used on my work and is also hardcoded
