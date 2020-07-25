@@ -32,7 +32,7 @@ To use this application it is necessary to open the Windows command line (or, if
 ### Initialization module
 In order to execute the initialization module and thus generate the necessary data files, a command with the following structure must be executed:
 
-java -jar BenchmarkIDS.jar setup <fich1> <fich2>
+```java -jar BenchmarkIDS.jar setup <fich1> <fich2>```
 
 
 
