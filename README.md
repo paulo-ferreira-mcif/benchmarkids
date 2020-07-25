@@ -37,32 +37,26 @@ In order to execute the initialization module and thus generate the necessary da
 
 
 The parameters mean the following:
-\ begin {itemize}
-\ item <fich1> - file number that will serve as the basis for training the model
-\ item <fich2> - file number that will serve as the basis for the zero-day attack simulation
-\ end {itemize}
+
+* <fich1> - file number that will serve as the basis for training the model
+* <fich2> - file number that will serve as the basis for the zero-day attack simulation
 
 So, for example, the command
 
-\ begin {Verbatim}
-java -jar BenchmarkIDS.jar setup 02 03
-\ end {Verbatim}
+```java -jar BenchmarkIDS.jar setup 02 03```
 
-will execute the initialization module, accessing the Data \ _02.csv file to generate the model training data and the Data \ _03.csv file to create the file that will simulate the zero-day attack.
+will execute the initialization module, accessing the Data_02.csv file to generate the model training data and the Data_03.csv file to create the file that will simulate the zero-day attack.
 
+### Training module
 In the training module, the command structure is as follows:
 
-\ begin {Verbatim *}
-java -jar BenchmarkIDS.jar training <algoritmo>
-\ end {Verbatim *}
+```java -jar BenchmarkIDS.jar training <algoritmo> ```
 
-The algorithm parameter can only assume 3 distinct values:
+The **algorithm** parameter can only assume 3 distinct values:
 
-\ begin {itemize}
-\ item clonalg - to select the CLONALG algorithm
-\ item mlp - to select the Multi-Layer Perceptron algorithm
-\ item lvq - to select the Learning Vector Quantization algorithm
-\ end {itemize}
+* clonalg - to select the CLONALG algorithm
+* mlp - to select the Multi-Layer Perceptron algorithm
+* lvq - to select the Learning Vector Quantization algorithm
 
 If, for example, we intended to train CLONALG models, the command to be executed would be, then:
 
