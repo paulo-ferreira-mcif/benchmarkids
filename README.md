@@ -52,7 +52,7 @@ In the training module, the command structure is as follows:
 
 ```java -jar BenchmarkIDS.jar training <algoritmo> ```
 
-The **algorithm** parameter can only assume 3 distinct values:
+The **algoritmo** parameter can only assume 3 distinct values:
 
 * clonalg - to select the CLONALG algorithm
 * mlp - to select the Multi-Layer Perceptron algorithm
@@ -60,32 +60,31 @@ The **algorithm** parameter can only assume 3 distinct values:
 
 If, for example, we intended to train CLONALG models, the command to be executed would be, then:
 
-\ begin {Verbatim}
-java -jar BenchmarkIDS.jar training clonalg
-\ end {Verbatim}
+```java -jar BenchmarkIDS.jar training clonalg```
 
-The test module includes two different options, one to test a certain algorithm and the other to generate and test the \ textit {ensembles} of the 3 algorithms, grouped 2 to 2.
+### Test Module
+The test module includes two different options, one to test a certain algorithm and the other to generate and test the *ensembles* of the 3 algorithms, grouped 2 to 2.
 
-The command structure for testing a given algorithm, including the zero-day attack simulation test, is as follows:
+The command structure for **testing a given algorithm**, including the zero-day attack simulation test, is as follows:
 
-\ begin {Verbatim *}
-java -jar BenchmarkIDS.jar test <algoritmo>
-\ end {Verbatim *}
+```java -jar BenchmarkIDS.jar test <algoritmo>```
 
-The admissible values ​​for the parameter <algorithm> are the same as for the parameter with the same name in the training module.
+The valid and supported values for the parameter **algoritmo** are the same as for the parameter with the same name in the training module.
 
-To generate the \ textit {ensembles} and perform the respective tests, simply execute the command:
+To **generate the _ensembles_ and perform the respective tests**, simply execute the command:
 
-\ begin {Verbatim *}
-java -jar BenchmarkIDS.jar ensemble
-\ end {Verbatim *}
+```java -jar BenchmarkIDS.jar ensemble```
 
-To use the scenarios module, simply execute the command:
+### Scenarios Module
+To use the scenarios module, simply issue the command:
 
-\ begin {Verbatim *}
-java -jar BenchmarkIDS.jar training <cenario>
-\ end {Verbatim *}
+```java -jar BenchmarkIDS.jar training <cenario>```
 
-The parameter \ textit {scenario} can take the values ​​scenario1, scenario2, scenario3 and scenario4.
+The valid values for the parameter **scenario** are : 
+
+* cenario1 - will perform the defined tests for scenario 1
+* cenario2 - will perform the defined tests for scenario 2
+* cenario3 - will perform the defined tests for scenario 3
+* cenario4 - will perform the defined tests for scenario 4
 
 
