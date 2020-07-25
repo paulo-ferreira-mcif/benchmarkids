@@ -84,7 +84,7 @@ To use the scenarios module, simply issue the command:
 
 ```java -jar BenchmarkIDS.jar training <cenario>```
 
-The valid values for the parameter **scenario** are : 
+The valid values for the parameter **cenario** are : 
 
 * cenario1 - will perform the defined tests for scenario 1
 * cenario2 - will perform the defined tests for scenario 2
