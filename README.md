@@ -25,7 +25,9 @@ Starting from the parameters passed on the command line, open the corresponding 
 
 ## Compiling
 
-I compiled the code using Netbeans. It's absolutely necessary, for the success of the compilation, to install the Wekaclassalgos library. This library, originally developed by Jason Brownlee, is available in github at 
+I compiled the code using Netbeans. 
+
+It's absolutely necessary, for the success of the compilation, to install the Wekaclassalgos library. This library, originally developed by Jason Brownlee, is available in github at https://github.com/fracpete/wekaclassalgos
 
 ## Usage
 
