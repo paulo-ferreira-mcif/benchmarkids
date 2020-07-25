@@ -32,7 +32,9 @@ It's absolutely necessary, for the compilation to succeed:
 * Include the Weka API, by means of including the file Weka.jar from your Weka installation directory
 * Include the Wekaclassalgos library. This library, originally developed by Jason Brownlee, is available in github at https://github.com/fracpete/wekaclassalgos
 
-For those using Maven, there's also a Maven dependency that deals with including Wekaclassalgos library (see https://github.com/fracpete/wekaclassalgos for more information)
+For those using Maven, there's also a Maven dependency that deals with including Wekaclassalgos library (see https://github.com/fracpete/wekaclassalgos for more information).
+
+Information on how to use the WEKA API in Java applications can be found at [Use weka in your java code](https://waikato.github.io/weka-wiki/use_weka_in_your_java_code/#links)
 
 ## Usage
 
