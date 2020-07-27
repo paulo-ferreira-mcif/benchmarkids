@@ -8,7 +8,7 @@ It's a very specific application, mainly aimed at automating the specific tests 
 
 Still, it´s a nice example on how to use WEKA's Java API.
 
-The BenchmarkIDS application was created as a result of meeting some needs related to this work, namely the flexibility provided by the API and trying to overcome some limitations of the graphic environment. The application, developed in Java, has no graphical environment and the results are only shown on the screen (they are not saved in a file).
+The BenchmarkIDS application was created as a result of meeting some requirements related to this work, namely the flexibility provided by the API and trying to overcome some limitations of the graphic environment. The application, developed in Java, has no graphical environment and the results are only shown on the screen (they are not saved in a file).
 
 ## Structure
 The application consists of 4 modules: the initialization module (_setup_), the training module, the testing module and the scenarios module.
