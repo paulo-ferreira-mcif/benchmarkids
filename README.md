@@ -109,4 +109,4 @@ As mentioned before, this application was developed to meet specific requirement
 ## About the authors
 Paulo Ferreira (2180047@my.ipleiria.pt) - I'm a MSc student - Cybersecurity and Computer Forensics - at Polytechnic Institute of Leiria (IPL), School of Technology and Management (ESTG)
 
-Mário Antunes (mario.antunes@ipleiria.pt) - professor and Coordinator of the Master in Cybersecurity and Computer Forensics and professor at Polytechnic Institute of Leiria (IPL), School of Technology and Management (ESTG), Department of Computer Engineering (DEI).
+Mário Antunes (mario.antunes@ipleiria.pt) - professor and Coordinator of the Master in Cybersecurity and Computer Forensics at Polytechnic Institute of Leiria (IPL), School of Technology and Management (ESTG), Department of Computer Engineering (DEI).
