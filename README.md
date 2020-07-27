@@ -105,3 +105,8 @@ As mentioned before, this application was developed to meet specific requirement
 - The algorithms used are just the ones I used on my work
 - The patametrization of each algorithm is also hardcoded
 - The name of the data files resembles what I used on my work and is also hardcoded
+
+## About the authors
+Paulo Ferreira (2180047@my.ipleiria.pt) - I'm a MSc student - Cybersecurity and Computer Forensics - at Polytechnic Institute of Leiria (IPL), School of Technology and Management (ESTG)
+
+Mário Antunes (mario.antunes@ipleiria.pt) - professor and Coordinator of the Master in Cybersecurity and Computer Forensics and professor at Polytechnic Institute of Leiria (IPL), School of Technology and Management (ESTG), Department of Computer Engineering (DEI).
