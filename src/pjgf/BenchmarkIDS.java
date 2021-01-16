@@ -56,37 +56,37 @@ import weka.gui.visualize.ThresholdVisualizePanel;
  */
 public class BenchmarkIDS {
     
-    // Constantes
+    // Constants
     private static final String data_path="c:\\Developer\\dados_mcif\\";
     private static final String modelos_path=data_path+"modelos\\";
     private static final String reports_path=data_path+"reports\\";
     private static final String dataset_path=data_path+"dataset\\";
     
     /* 
-    * pasta com os ficheiros dos datasets a utilizar na simulação
-    * haverá 3 ficheiros: training.csv, test.csv e zeroday.csv
+    * folder with dataset files to use in simulation
+    * there will be 3 files: training.csv, test.csv and zeroday.csv
     */
     private static final String currentdataset_path=data_path+"current\\"; 
     
     private static final int numModelos=3;
     
-    // Ficheiro com os dados de treino e teste para gerar modelos
+    // file containing training and test data to generate the models
     private static final String ficheiro1=data_path+"Dados_02.csv";
     
-    // ficheiro1_training - dados do ficheiro 1 para treino do modelo
+    // ficheiro1_training - data from file 1; model training data
     private static final String ficheiro1_training=currentdataset_path+"training.csv";
     
-    // ficheiro1_test - dados do ficheiro 1 para teste do modelo
+    // ficheiro1_test - data from file 1; model test data
     private static final String ficheiro1_test=currentdataset_path+"test.csv";
         
-    // Ficheiro com os dados de teste
+    // File with test data
     private static final String ficheiro2=data_path+"Dados_03.csv";
     
-    // Ficheiro para zero-day
+    // zero-day simulation file
     private static final String zeroday_file=currentdataset_path+"zeroday.csv";
     
     /**
-     * Função para abrir o dataset a partir de um ficheiro
+     * Function to open a dataset from a file
      * @param filename
      * @return 
      * 
@@ -99,7 +99,7 @@ public class BenchmarkIDS {
         
         File dados=new File(filename);
         
-        // Atributos com "Infinity" passam a Missing Values
+        // Attributes with "Infinity" as value are considered Missing Values
         loader.setMissingValue("Infinity");
         
             
@@ -126,8 +126,8 @@ public class BenchmarkIDS {
     }
     
     
-    // Obtem numero de linhas para cada valor distinto da classe
-    // O dataset tem que ter a classe definida
+    // Gets number of occurrences for each distinct class value
+    // The dataset must have a defined class
     public static void estatisticaClasse (Instances dados){        
         
         // Numero de valores diferentes da classe
@@ -155,11 +155,11 @@ public class BenchmarkIDS {
     }
     
     /**
-     * Função que, a partir de um dataset, devolve uma amostra com,
-     * aproximadamente, numLinhas linhas; os dados estão estratificados (stratified)
-     * @param dados - O dataset a dividir
-     * @param numLinhas - número de linhas pretendidas
-     * @param seed - seed para utilizar
+     * Function to get approximately numLinhas samples from a dataset; 
+     * The result data is stratified
+     * @param dados - source dataset
+     * @param numLinhas - Number of lines
+     * @param seed - seed to use
      * 
      * @return 
      */
@@ -210,7 +210,7 @@ public class BenchmarkIDS {
     }
     
     
-    // Função para alterar as classes, para contemplar apenas 2 valores:
+    // Function to change class values; final values will be:
     // => Normal
     // => Malicioso
     public static Instances trataClasse(Instances dados){
@@ -267,9 +267,9 @@ public class BenchmarkIDS {
     
     
     /**
-     * Função para tratar os Missing Values (NaN) do dataset
+     * Function to deal with missing values in a specified dataset
      * 
-     * @param dados - dataset a tratar
+     * @param dados - dataset to use
      * 
      * @return 
      *  
@@ -297,11 +297,10 @@ public class BenchmarkIDS {
     
     
     /**
-     * Gera o modelo com baso no algoritmo CLONALG
-     * @param dadosTreino : dataset para treino do modelo
-     * @param options : parametros do modelo
-     * @return Retorna um modelo clonalg, cuja configuração é dada pelas options
-     * e treinado com os dadosTreino
+     * Generate a model using CLONALG algorithm
+     * @param dadosTreino : dataset used to train the model
+     * @param options : model parameters
+     * @return Returns a CLONALG model with specified configuration
      */
     public static Classifier geraModeloCLONALG(Instances dadosTreino,String[] options){
         // Classifier modelo;
@@ -323,8 +322,9 @@ public class BenchmarkIDS {
     }
     
     /**
-     * Função para gerar um arrays de strings com as opções para criação dos modelos BackMLP
-     * Parametros de acordo com implementação de Jason Brownlee
+     * Function to generate an array of strings containing configuration options
+     * The array will be used in creating models using the Jason Brownlee implementation of BackMLP algorithm
+     * Parameters correspond to Jason Brownlee's implementation
      * @param layer1
      * @param layer2
      * @param layer3
@@ -372,7 +372,9 @@ public class BenchmarkIDS {
     
     
     /**
-     * Função para gerar um array de strings com as opções de configuração dos modelos BackMLP
+     * 
+     * Function to generate an array of strings containing configuration options
+     * The array will be used in creating models using BackMLP algorithm (WEKA implementation)
      * @param hiddenLayers
      * @param learningRate
      * @param momentum
@@ -407,11 +409,10 @@ public class BenchmarkIDS {
     }
     
     /**
-     * GeraModeloBackMLPBrownlee - Gera um modelo recorrendo a back-propagation MLP
-     * Açgpritmo implementado por Jason Brownlee
+     * Function to generate a model using Jason Brownlee's implementation of BackMLP
      * 
-     * @param dadosTreino - Dados de Treino (Teem que estar normalizados)
-     * @param options - opcções de configuração do modelo
+     * @param dadosTreino - Training data (MUST BE NORMALIZED!)
+     * @param options - model configuration options
      * @return 
      *  
      */
@@ -434,10 +435,10 @@ public class BenchmarkIDS {
      
     
     /**
-     * GeraModeloBackMLP - Gera um modelo recorrendo a back-propagation MLP
+     * Function to generate a model using WEKA's implementation of BackMLP
      * 
-     * @param dadosTreino - Dados de Treino (Teem que estar normalizados)
-     * @param options - opcções de configuração do modelo
+     * @param dadosTreino - Training data (MUST BE NORMALIZED!)
+     * @param options - model configuration options
      * @return 
      *  
      */
@@ -459,8 +460,9 @@ public class BenchmarkIDS {
      }
      
     /**
-     * Função para gerar os 3 modelos BackMLP
-     * A função grava os 3 modelos no directório pré-definido
+     * Function to generate the 3 BackMLP (Jason Brownlee's implementation) models used in my thesis
+     * The Brownlee implementation was not used in the final work, but the code was maintained here as reference
+     * The models will be saved, for later use, in the pre-defined folder
      * @param dadosTreino
      * @param seed 
      */
@@ -567,7 +569,7 @@ public class BenchmarkIDS {
     }
     
     /**
-     * Função para gerar os 3 modelos MultiLayer Perceptron
+     * Function to generate the 3 BackMLP (WEKA implementation) models used in my thesis
      * @param dadosTreino
      * @param seed 
      */
@@ -657,7 +659,7 @@ public class BenchmarkIDS {
     
     
     /**
-     * Função para testar os 3 modelos BackMLP
+     * Function to test the 3 generated BackMLP models
      * @param dadosTreino
      * @param dadosTeste
      * @param seed 
@@ -700,7 +702,8 @@ public class BenchmarkIDS {
     }
     
     /**
-     * Função para gerar o ensemble dos 3 modelos BackMLP
+     * Function to generate an ensemble using the 3 generated BackMLP models
+     * The Majority Voting strategy was used
      * @param seed
      * @return 
      */
@@ -738,6 +741,10 @@ public class BenchmarkIDS {
         }
     }
     
+    /**
+     * Function to simulate a zero-day attack, using the generated BackMLP models
+     * @param seed 
+     */
     public static void zeroDayBackMLP(int seed){
         Vote ensemble;
         // Abre segundo ficheiro de dados e usa-o  como dataset de testes
@@ -794,7 +801,8 @@ public class BenchmarkIDS {
     }
     
     /*
-     * Modelos LVQ - Learning Vector Quantization
+     * Function to generate a LVQ (Learning Vector Quantization) model/classifier
+     * using the specified options
     */
     
     public static Classifier geraModeloLVQ(Instances dadosTreino,String [] options){
@@ -813,7 +821,7 @@ public class BenchmarkIDS {
     }
     
     /**
-     * Função para gerar a string de opçóes de cada modelo LVQ3
+     * Function to generate the string array containing the LVQ3 model configuration options (parameters)
      * @param epsilon
      * @param initMode
      * @param learningFunction
@@ -854,7 +862,7 @@ public class BenchmarkIDS {
     }
     
     /**
-     * Função para gerar os 3 modelos LVQ
+     * Function to generate the 3 LVQ models used in my thesis
      * @param dadosTreino
      * @param seed 
      */
@@ -959,7 +967,7 @@ public class BenchmarkIDS {
     }
     
     /**
-     * Função para testar os modelos LVQ previamente gerados
+     * Function to test the previously generated LVQ models
      * @param dadosTreino
      * @param dadosTeste
      * @param seed 
@@ -1002,7 +1010,8 @@ public class BenchmarkIDS {
     }
     
     /**
-     * Função para gerar o ensemble dos modelos LVQ
+     * Function to generate the ensemble of the 3 generated LVQ models
+     * The Majority Voting strategy was used
      * @param seed
      * @return 
      */
@@ -1041,7 +1050,7 @@ public class BenchmarkIDS {
     }
     
     /**
-     * Função para testar os modelos LVQ face a um ataque zero-day
+     * Function to simulate a zero-day attack detection using the 3 LVQ generated models
      * @param seed 
      */
     public static void zeroDayLVQ(int seed){
@@ -1100,7 +1109,7 @@ public class BenchmarkIDS {
     }
     
     /**
-     * Função para normalizar oa atributos numéricos do dataset
+     * Function to normalize the numeric attributes of a specified dataset
      * @param dataset
      * @return 
      */
@@ -1122,6 +1131,7 @@ public class BenchmarkIDS {
     // Testa o modelo (dados de teste) e devolve predicoes
     // A ideia é devolver um Evaluation, que possa, depois, ser tratada no
     // programa principal
+    // UNUSED FUNCTION... see testaModeloEvaluation function
     /**
      * Função para testar um modelo (classificador)
      * @param modelo - modelo a testar
@@ -1155,9 +1165,8 @@ public class BenchmarkIDS {
     }
     
     
-    // Testa o modelo (dados de teste) e devolve predicoes
-    // A ideia é devolver um Evaluation, que possa, depois, ser tratada no
-    // programa principal
+    // Function to test a specified model, using the specified test data
+    // Returns predictions, as an Evaluation object, so enabling further treatment in main program
     /**
      * Função para testar um modelo (classificador), guardando os resultados no ficheiro indicado
      * @param modelo
@@ -1212,11 +1221,11 @@ public class BenchmarkIDS {
     
     
     /**
-     * Função para dividir um dataset em dados de treino e dados de teste
-     * @param dataset - dataset a dividir
-     * @param percentTraining - percentagem do dataset a ser considerado dados de treino
+     * Function to split a specified dataset into training and test datasets
+     * @param dataset - dataset to split
+     * @param percentTraining - percent of dataset to be used as training data
      * @param seed - 
-     * @return array com dados de treino (posição zero) e dados de teste (posição 1)
+     * @return array with training data (index zero) and test data (index 1)
      */
     public static Instances[] geraTreinoTeste(Instances dataset, double percentTraining, int seed){
         Instances dados[],training,test;
@@ -1271,7 +1280,7 @@ public class BenchmarkIDS {
     
     
     /**
-     * Gera o array de strings com as opções para o CLONALG
+     * Function to generate the array of strings containing configuration options to CLONALG algorithm
      * @param poolSize - Antibody pool size
      * @param clonalFactor - Clonal factor
      * @param numGen - number of generations
@@ -1304,11 +1313,10 @@ public class BenchmarkIDS {
     }
     
     
-    // Testa o modelo (dados de teste) e devolve predicoes
-    // A ideia é devolver um Evaluation, que possa, depois, ser tratada no
-    // programa principal
+    // Function to test a model using specified test data
+    // Returns an ArrayList with the predictions
     /**
-     * Função para testar o modelo; 
+     * Function to test a model
      * @param modelo - modelo (classificador) a testar
      * @param dadosTreino - dados de Treino
      * @param dadosTeste - dados de Teste
@@ -1343,7 +1351,7 @@ public class BenchmarkIDS {
     }
     
     /**
-     * Função que mostra a ajuda da ferramenta
+     * Function to display help message
      */
     static void showHelp(){
         System.out.println("comandos disponiveis:\n");
@@ -1360,7 +1368,7 @@ public class BenchmarkIDS {
     }
     
     /**
-     * Função que prepara o dataset para a geração dos modelos
+     * Function that prepares dataset to be used (includes pre-processing tasks)
      * @param seed
      * @return 
      */
@@ -1422,8 +1430,8 @@ public class BenchmarkIDS {
     
     
     /**
-     * Função para gerar/criar os modelos CLONALG
-     * Guarda os modelos em ficheiro para uso posterior
+     * Function to generate the 3 CLONALG models/classifiers used in my thesis
+     * The generated models are saved in a default location for further use
      * @param dadosTreino
      * @param seed 
      */
@@ -1512,7 +1520,7 @@ public class BenchmarkIDS {
     
     
     /**
-     * Testa os modelos CLONALG, tendo como base os dados de treino e teste fornecidos
+     * Function to test the 3 CLONALG generated models using the specified test data
      * @param dadosTreino
      * @param dadosTeste
      * @param seed 
@@ -1553,7 +1561,8 @@ public class BenchmarkIDS {
     }
     
     /**
-     * Função que gera o modelo ensemble doo CLONALG, combinando os 3 modelos individuais
+     * Function to generate an ensemble from the 3 pre-generated CLONALG models
+     * The Majority Voting Strategy was used
      * @param seed
      * @return o modelo ensemble
      */
@@ -1594,7 +1603,8 @@ public class BenchmarkIDS {
     
     
     /**
-     * Função que testa os modelos CLONALG utilizando um ficheiro de dados completo (ficheiro2)
+     * Function to test the 3 pre-generated CLONALG models/classifiers against a data stored in a file
+     * The purpose is to simulate zero-day attack detection
      * @param seed 
      */
     public static void zeroDayCLONALG(int seed){
@@ -1654,8 +1664,8 @@ public class BenchmarkIDS {
     }
     
     /**
-     * Gera a ROC Curve das predições
-     * Código extraído de https://waikato.github.io/weka-wiki/generating_roc_curve/
+     * Function to generate ROC curves based on the specified predictions
+     * The code is based on https://waikato.github.io/weka-wiki/generating_roc_curve/
      * @param predictions 
      */
     public static void geraROCCurve(ArrayList predictions){
@@ -1704,12 +1714,13 @@ public class BenchmarkIDS {
     }
     
     /**
-     * Função para preparar o ambiente de testes
-     * Selecciona os dois ficheiros, do primeiro retira o número de amostras indicado
-     * e gera os ficheiros para treino e teste
-     * Abre o segundo ficheiro, faz o pré-processamento do mesmo e grava-o com o nome zeroday.csv
+     * Function to prepare test environment
+     * Selects 2 datafiles from the original dataset (specified in command line - see below)
+     * From the first one, extracts teh specified number of samples, splits it into training and test data
+     * and saves the result in the training and test datafiles;
+     * The second file is pre-processed and saved as zeroday.csv , to be further used as source to simulate a zero-day attack
      * 
-     * Os parametros file1 e file2 são numeros (ex.: 02 03) que são passados na linha de comandos
+     * file1 and file2 should be numbers (ex.: 02 03) and are command line arguments
      * 
      * @param file1 Ficheiro que será utilizado no treino do modelo
      * @param file2 Ficheiro utilizado para simular ataque zero-day
@@ -1763,7 +1774,7 @@ public class BenchmarkIDS {
     }
     
     /**
-     * Fiunção que faz o pre-processamento do dataset - reduz as classes e trata missing values
+     * Function that does pre-processing on a specified dataset - class reduction and dealing with missing values
      * @param dataset
      * @return 
      */
@@ -1781,7 +1792,7 @@ public class BenchmarkIDS {
     }
     
     /**
-     * Função para guardar um dataset em disco, em formato CSV
+     * Function to save a specified dataset to disk (.CSV format)
      * @param dataset
      * @param filename 
      */
